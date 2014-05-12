@@ -1,0 +1,15 @@
+  {% if user %}
+    <p>Welcome {{ user.email() }}</p>
+  {% endif %}
+  
+  {%  if is_admin %}
+     <p>You are signed in as a developer, feel free to go to the <a href="/developer">Developer Page</a>.</p>
+  {% else %}
+     <p>You are not signed in as a developer.</p>
+  {% endif %}
+
+  {% if user %}
+    <p><a href="{{ logout_url }}">Log Out</a></p>
+  {% else %}
+    <p>Please <a href="{{ login_url }}">Sign In</a></p>
+  {% endif %}

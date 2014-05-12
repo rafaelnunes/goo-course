@@ -1,0 +1,5 @@
+class HomePage(_BaseHandler):
+  def get(self):
+    template = jinja_environment.get_template('home.template')
+    self.response.out.write(template.render(self.template_values))
+

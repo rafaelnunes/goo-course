@@ -1,0 +1,33 @@
+class Announcement(db.Model):
+  # create announcement as db.StringProperty()
+  announcement = db.StringProperty()
+  # create time as db.DataTimeProperty()
+  time = db.DateTimeProperty()
+
+  @staticmethod
+  def SetLatestAnnouncement(announcement):
+    # put announcement in memcache
+    memcache.set('latestAnnouncement', announcement, 3600)
+    # Add it to the datastore.
+    entity = Announcement(announcement = announcement, time = datetime.datetime.now())
+    entity.put()
+
+  @staticmethod
+  def GetLatestAnnouncement():
+    # Get announcement out of memcache.get('latestAnnouncement')
+    announcement = memcache.get('latestAnnouncement')
+    if announcement:
+      return announcement
+    else:
+      # query to get all Announcements
+      query = Announcement.all()
+      # order by time assending (-time)
+      query.order('-time')
+      #run the query and place return in result.
+      #get a limit of 1
+      result = query.run(limit=1)
+      try:
+        return iter(result).next().announcement
+      except StopIteration:
+        return 'ANNOUNCEMENT NOT FOUND'
+

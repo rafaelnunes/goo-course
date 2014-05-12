@@ -1,0 +1,38 @@
+class ProcessNewConference(webapp2.RequestHandler):
+  def post(self):
+    conf_key = self.request.get('conf_key')
+    conference = db.get(db.Key(conf_key))
+    if conference:
+      ProcessNewConference._AnnounceConference(conference)
+      ProcessNewConference._CreateTaskToEmailPotentialAttendees(conf_key)
+      ProcessNewConference._SendConfToPullQueueForReview(conf_key)
+    else:
+      logging.error('Cannot find conference for %s' % conf_key)
+      self.response.set_status(500)
+
+  @staticmethod
+  def _AnnounceConference(conference):
+    # Create an announcement about the conference
+    latest_announcement = ("A new conference has just been scheduled! "
+        "%s in %s. Don't wait, book now!") % (conference.name, conference.city)
+    # Set the announcement
+    Announcement.SetLatestAnnouncement(latest_announcement)
+ 
+  @staticmethod
+  def _CreateTaskToEmailPotentialAttendees(conference_key_str):
+    parameters = {'conf_key': conference_key_str}
+    queue = taskqueue.Queue()
+    # Development is not able to resolve the backend server target.
+    if os.environ['SERVER_SOFTWARE'].startswith('Development'):
+      task = taskqueue.Task(url='/notifyinterestedusers', params=parameters)
+    else:
+      task = taskqueue.Task(url='/notifyinterestedusers', params=parameters,
+          target='notify-backend')
+    queue.add(task)
+
+  @staticmethod
+  def _SendConfToPullQueueForReview(conf_key):
+    queue = taskqueue.Queue('review-conference-queue')
+    task = taskqueue.Task(payload=conf_key, method='PULL')
+    queue.add(task)
+

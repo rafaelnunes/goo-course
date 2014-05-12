@@ -1,0 +1,6 @@
+    conference_key_str = str(conference.key())
+    db.put([Ticket(parent=conference,
+                   ticket_number=i,
+                   conference_name=name,
+                   conference_key_str=conference_key_str) for i in range(max_attendees)])
+    self.redirect('/showtickets?conf_name=%s&conf_key_str=%s' % (name, conference_key_str))

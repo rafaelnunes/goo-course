@@ -1,0 +1,9 @@
+{% extends "base.template" %}
+{% block content %}
+<h1>List Conferences</h1>
+
+<p>This page will list all our amazing conferences when we have some!</p>
+
+<p>Content coming soon!</p>
+
+{% endblock %}

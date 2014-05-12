@@ -1,0 +1,8 @@
+{% extends "base.template" %}
+{% block content %}
+
+<h1>Developer Page</h1>
+
+<p>This page is for developers who are working on the application.</p>
+
+{% endblock %}

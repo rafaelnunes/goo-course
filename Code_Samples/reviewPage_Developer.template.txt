@@ -1,0 +1,7 @@
+<hr>
+<h3>Review Conferences</h3>
+<p>Check this button to list conferences that need to be reviewed</p>
+<form action="/reviewconferences" method="POST">
+  <p><input type="submit" value="Review New Conferences" name="reviewconference"/></p>
+</form>
+<hr>

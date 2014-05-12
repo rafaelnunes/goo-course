@@ -1,0 +1,18 @@
+{% extends "base.template" %}
+{% block content %}
+<h1>{{ heading }} User Profile</h1>
+<p><b>Your main email is: </b> {{ user.email() }}</p> 
+<form action="/saveprofile" method="post">
+  <p><b>What is your name?</b></p>
+  <input type=text value="{{ person_name }}" name="person_name" />
+  <p><b>What conference topics are you interested in?</b></p>
+  <select name="topics" multiple>
+  {% for topic, selected in topics.iteritems() %}
+    <option value="{{ topic }}" {{ selected }}>{{ topic }}</option>
+  {% endfor %}
+  </select>
+  <p><b>What is your email for receiving notifications?</b></p>
+  <input type=text value="{{ notification_email }}" name="notification_email" /></p>
+  <input type=submit value="Update my user profile" id=updateprofile />
+</form>
+{% endblock %}

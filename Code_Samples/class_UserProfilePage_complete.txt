@@ -1,0 +1,17 @@
+  def get(self):
+    user_profile = db.get(db.Key.from_path('RegisteredUser', self.user.email()))
+    topics = OrderedDict.fromkeys(TOPICS, '')
+    if user_profile:
+      self.template_values['heading'] = 'Edit  Your'
+      self.template_values['person_name'] = user_profile.name
+      self.template_values['notification_email'] = user_profile.notification_email
+      # Set up the topics dictionary with the list of topics and set the
+      # 'selected' attribute if it is selected by the user
+      for topic in user_profile.interests:
+        topics[topic] = 'selected'
+    else:
+        self.template_values['heading'] = 'Create a'
+    self.template_values['topics'] = topics
+    template = jinja_environment.get_template('user_profile.template')
+    self.response.out.write(template.render(self.template_values)) 
+

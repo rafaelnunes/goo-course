@@ -1,0 +1,58 @@
+{% extends "base.template" %}
+{% block content %}
+
+{% macro write_header() -%}
+  <tr><th>Conference Title</th>
+      <th width="25%">Description</th>
+      <th>Organizer</th>
+      <th>Category</th>
+      <th>City</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Max Attendees</th>
+      <th>Buy ticket</th>
+      <th>Conf Key</th>
+  </tr>
+{%- endmacro %}
+
+{% macro write_conferences(conferences) -%}
+  {% for conference in conferences %}  
+    <tr><td>{{ conference.name|e }}</td>
+        <td>{{ conference.desc|e }}</td>
+        <td>{{ conference.organizer|e }}</td>
+        <td>{{ conference.topic }}</td>
+        <td>{{ conference.city }}</td>
+        <td>{{ conference.start_date }}</td>
+        <td>{{ conference.end_date }}</td>
+        <td>{{ conference.max_attendees }}</td>
+         <td><a href="/showtickets?conf_name={{ conference.name }}&conf_key_str={{ conference.key() }}">Buy Ticket</a></td>
+        <td>{{ conference.key() }}</td>
+     </tr>
+  {% endfor %}
+{%- endmacro %}
+
+{% macro write_table(conferences) -%}
+<p>
+<table cellpadding="5px" border="1"> 
+  {{ write_header() }}
+  {{ write_conferences(conferences) }}
+</table><br/><br/>
+</p>
+{%- endmacro %}
+
+<h1>List Conferences</h1>
+<h3>All Conferences</h3>
+{{ write_table(conferences) }}
+<h3>All Conferences Sorted Alphabetically</h3>
+{{ write_table(ordered_conferences) }}
+<h3>All Conferences In London sorted Alphabetically</h3>
+{{ write_table(filtered_conferences) }}
+<h3>All Conferences About Medical Innovations In London</h3>
+{{ write_table(london_medical_conferences) }}
+<h3>All conferences With 50 or more attendees</h3>
+{{ write_table(max_attendees_conferences) }}
+<!-- TODO
+<h3>All conferences About Medical Innovations in London with {{ user.nickname() }} </h3>
+{{ write_table(filtered_by_organizer_conferences) }}
+-->
+{% endblock %}

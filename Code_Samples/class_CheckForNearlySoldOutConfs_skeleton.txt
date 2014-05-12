@@ -1,0 +1,22 @@
+class CheckForNearlySoldOutConfs(webapp2.RequestHandler):
+  def get(self):
+    #  create a list for nearly_soldout_confs
+    nearly_soldout_confs =       
+    # create a conference_query of all Conferences (Conference.all())
+    conference_query = 
+    for conference in conference_query:
+      # Check to see if:
+      #   conference.max_attendees is non-zero
+      #   there are some tickets still available 
+      #   the number of tickets available / max number of tickets <= 0.25
+      # HINT:  numbers are not floats!
+      if ( ):
+        # append conference.name to nearly_soldout_confs
+        nearly_soldout_confs.append(               )
+
+    if nearly_soldout_confs:
+      announcement = ('Last chance to sign up! '
+          'These conferences are nearly sold out: %s'
+          % ','.join(nearly_soldout_confs))
+      Announcement.SetLatestAnnouncement(announcement)
+

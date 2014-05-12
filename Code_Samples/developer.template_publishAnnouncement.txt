@@ -1,0 +1,12 @@
+<hr>
+<h3>Publish an Announcement</h3>
+<p>This form lets you publish an announcement to appear at the top of
+every page in the site.</p>
+<form action="/developer" method="POST">
+  <p>Announcement:</p>
+  <textarea name="announcement" cols="80" rows="10">
+  Your announcement goes here
+  </textarea>   
+  <p><input type="submit" value="submit" /></p>
+</form>
+

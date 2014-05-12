@@ -1,0 +1,6 @@
+    # Check if the page was invoked with the 'announcement' parameters
+    value = self.request.get('announcement')
+    if value: 
+      announcement = ' '.join(value.splitlines())
+      Announcement.SetLatestAnnouncement(announcement)
+

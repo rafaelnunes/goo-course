@@ -1,0 +1,8 @@
+  @staticmethod
+  def _AnnounceConference(conference):
+    # Create an announcement about the conference
+    latest_announcement = ("A new conference has just been scheduled! "
+        "%s in %s. Don't wait, book now!") % (conference.name, conference.city)
+    # Set the announcement
+    Announcement.SetLatestAnnouncement(latest_announcement)
+ 

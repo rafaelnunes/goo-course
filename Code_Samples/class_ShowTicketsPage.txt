@@ -1,0 +1,14 @@
+class ShowTicketsPage(_BaseHandler):
+  def get(self):
+    name = self.request.get(<GET THE CONFERENCE name WHICH IS AVAIALABLE AS conf_name>)
+    conf_key_str = self.request.get('conf_key_str')
+    query = <QUERY Ticket for all tickets>
+    query.filter(<FILTER 'status =' TO GIVE ONLY 'Available' TICKETS>)
+    query.order('-ticket_number')
+    tickets = query.run(limit=20)
+
+    self.template_values['conf_name'] = name
+    self.template_values['tickets'] = tickets
+    template = jinja_environment.get_template('tickets.template')
+    self.response.out.write(template.render(self.template_values)) 
+

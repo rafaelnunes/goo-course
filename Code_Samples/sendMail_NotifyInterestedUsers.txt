@@ -1,0 +1,13 @@
+  @staticmethod
+  def _SendMail(user, subject, msg):
+    # Refer to https://developers.google.com/appengine/docs/python/tools/devserver#Using_Mail
+    # on how to configure the development web server to send email. For this training
+    # exercise, we will just log it to the console.
+    if user.notification_email:
+      logging.info('Notifying %s: %s' % (user.main_email, subject))
+      # TODO Replace the address of a registered administrator for the application
+      mail.send_mail(sender="Conference Central Admin <registered_admin@yourapp.appspot.com>",
+          to=user.notification_email,
+          subject=subject,
+          body=msg)
+

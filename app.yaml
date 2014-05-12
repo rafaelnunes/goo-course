@@ -1,36 +1,37 @@
-application: educando-public
-version: 2
-
+# change application ID
+#application: training-conference-app
+application: yourappid
+version: 1
 runtime: python27
 api_version: 1
-threadsafe: true
+threadsafe: yes
 
 handlers:
-- url: /favicon\.ico
-  static_files: static/img/favicon.ico
-  upload: static/img/favicon\.ico
-  expiration: "365d"
+- url: /images
+  static_dir: images
 
-- url: /static
-  static_dir: static
+- url: /css
+  static_dir: css
 
-- url: /assets
-  static_dir: static
-  expiration: "365d"
+- url: /favicon.ico
+  static_files: favicon.ico
+  upload: favicon.ico
+
+- url: /userprofile
+  script: main.app
+
+- url: /scheduleconference
+  script: main.app
+
+- url: /developer
+  script: main.app
 
 - url: /.*
-  script: urls.app
+  script: main.app
 
 libraries:
 - name: webapp2
-  version: "2.5.1"
+  version: latest
+
 - name: jinja2
-  version: "2.6"
-
-
-inbound_services:
-- warmup
-
-builtins:
-- appstats: on
-- deferred: on
+  version: latest

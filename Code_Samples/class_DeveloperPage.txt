@@ -1,0 +1,17 @@
+class DeveloperPage(_BaseHandler):
+  def get(self):
+    template = jinja_environment.get_template('developer.template')
+    self.response.out.write(template.render(self.template_values)) 
+
+  def post(self):
+    value = self.request.get('deleteall')
+    kind = self.request.get('kind')
+    if value == 'yes':
+      try:
+        model_class = globals()[kind]
+        model_instance = model_class.all()
+        db.delete(model_instance)
+      except KeyError:
+        logging.info('%s is not an Entity defined in the application' % kind)
+    self.redirect('/developer')
+

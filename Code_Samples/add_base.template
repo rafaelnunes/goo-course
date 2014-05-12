@@ -1,0 +1,8 @@
+  {% if is_admin %}
+  <span class="nav-item"><a href="/developer">Developer Page</a></span>
+  {% endif %}
+  {% if user %}
+  <span class="nav-item"><a href="{{ logout_url }}">Log Out</a></p>
+  {% else %}
+  <span class="nav-item"><a href="{{ login_url }}">Sign In</a></p>
+  {% endif %}

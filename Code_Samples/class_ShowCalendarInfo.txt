@@ -1,0 +1,31 @@
+class ShowCalendarInfo(_BaseHandler):
+  @calendarauthdecorator.oauth_required
+  def get(self):
+    #self.response.out.write("We are authenticated, that is good to know")
+
+    # Get the authorized Http object created by the decorator.
+    auth_http = calendarauthdecorator.http()
+
+    # Get the calendar service
+    service = build('calendar', 'v3', http=auth_http)
+
+    # Initialize events_list to hold the retrieved events
+    events_list = []
+
+    # Use the service to get the events from the 
+    # AUTHENTICATED user's calendar
+    events = service.events().list(
+      calendarId='primary', 
+      # Change timeMin to something reasonable 
+      timeMin='2013-05-28T00:00:00-08:00',
+      maxResults=10).execute()
+
+    for event in events['items']:
+      events_list.append(event)
+
+    # Pass the calendar values to the calendar template
+    self.template_values = {'current_user': self.user, 'events': events_list}
+
+    template = jinja_environment.get_template('show_calendar.template')
+    self.response.out.write(template.render(self.template_values))
+

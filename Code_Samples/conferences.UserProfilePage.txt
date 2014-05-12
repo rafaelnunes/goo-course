@@ -1,0 +1,6 @@
+      registered_conferences = []
+      for ticket_key_str in user_profile.tickets_purchased:
+        ticket = db.get(db.Key(ticket_key_str))
+        conference = ticket.parent()
+        registered_conferences.append(conference)
+      self.template_values['registered_conferences'] = registered_conferences

@@ -1,0 +1,12 @@
+{% extends "base.template" %}
+{% block content %}
+
+<h1>Show Tickets</h1>
+
+<p>Conference name is {{ conf_name }} </p>
+
+{% for ticket in tickets %}
+<p>Ticket number {{ ticket.ticket_number }} is {{ ticket.status }} <a href="/buyticket?ticket_key_str={{ ticket.key() }}"> [Purchase] </a></p>
+{% endfor %}
+
+{% endblock %}

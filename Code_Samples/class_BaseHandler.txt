@@ -1,0 +1,20 @@
+
+from google.appengine.api import users
+from google.appengine.ext import webapp
+
+jinja_environment = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(os.path.dirname(__file__)))
+	constructor
+
+
+class _BaseHandler(webapp.RequestHandler):
+  def initialize(self, request, response):
+    super(_BaseHandler, self).initialize(request, response)
+    self.user = users.get_current_user()
+    if self.user:
+      self.template_values = {
+          'user': self.user,
+          'is_admin': users.is_current_user_admin(),
+          'logout_url': users.create_logout_url('/')}
+    else:
+      self.template_values = {'login_url': users.create_login_url(self.request.url)}

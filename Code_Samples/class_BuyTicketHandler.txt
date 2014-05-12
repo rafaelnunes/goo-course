@@ -1,0 +1,26 @@
+class BuyTicketHandler(_BaseHandler):
+  def get(self):
+    ticket_key_str = self.request.get('ticket_key_str')
+    try:
+      db.run_in_transaction_options(db.create_transaction_options(xg=True),
+          BuyTicketHandler._buyTicket, ticket_key_str, self.user.email())
+    except (db.InternalError, db.NotSavedError, db.Timeout, db.TransactionFailedError), e:
+      logging.info(e)
+    self.redirect('/userprofile')
+
+  @staticmethod
+  def _buyTicket(ticket_key_str, user_name):
+    ticket = db.get(db.Key(ticket_key_str))
+    ticket.status = 'Purchased'
+    ticket.owner = user_name
+    ticket.put()
+
+    # Decrease the value of the conference's num_tix_available property
+    conference = ticket.parent()
+    conference.num_tix_available -= 1
+    conference.put()
+
+    user = db.get(db.Key.from_path('RegisteredUser', user_name))
+    user.tickets_purchased.append(ticket_key_str)
+    user.put()
+

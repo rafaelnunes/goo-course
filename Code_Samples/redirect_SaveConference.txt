@@ -1,0 +1,1 @@
+    self.redirect('/showtickets?conf_name=%s&conf_key_str=%s' % (name, conference_key_str))

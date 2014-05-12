@@ -1,0 +1,8 @@
+{% if registered_conferences %}
+<h3>You are registered to attend the following conferences:</h3>
+{% for conference in registered_conferences %}
+<p> {{ conference.name }} in {{ conference.city }} on {{ conference.start_date }} </p>
+{% endfor %}
+<hr>
+{% endif %}
+

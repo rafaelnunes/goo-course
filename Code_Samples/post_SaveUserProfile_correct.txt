@@ -1,0 +1,19 @@
+  def post(self):
+    person_name = self.request.get('person_name')
+    topics = self.request.get_all('topics')
+    notification_email = self.request.get('notification_email')
+    # put() overwrites the existing entity.
+    user_profile = db.get(db.Key.from_path('RegisteredUser', self.user.email()))
+    if user_profile:
+      user_profile.name = person_name
+      user_profile.interests = topics
+      user_profile.notification_email = notification_email
+    else:
+      user_profile = RegisteredUser(key_name=self.user.email(),
+          main_email=self.user.email(),
+          name=person_name,
+          interests=topics,
+          notification_email=notification_email)
+    user_profile.put()
+    self.redirect('/userprofile')
+

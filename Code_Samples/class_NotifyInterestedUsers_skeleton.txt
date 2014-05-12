@@ -1,0 +1,11 @@
+class NotifyInterestedUsers(webapp2.RequestHandler):
+  def post(self):
+    # get conf_key from self.request.get()
+    conf_key =                              
+    # get the conference key from db.get(db.Key())
+    conference =                         
+    if conference:
+      NotifyInterestedUsers._EmailPotentialAttendees(conference)
+    else:
+      logging.error('Cannot find conference for %s' % conf_key)
+      self.response.set_status(500)

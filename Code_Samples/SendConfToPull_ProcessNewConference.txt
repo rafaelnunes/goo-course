@@ -1,0 +1,6 @@
+  @staticmethod
+  def _SendConfToPullQueueForReview(conf_key):
+    queue = taskqueue.Queue('review-conference-queue')
+    task = taskqueue.Task(payload=conf_key, method='PULL')
+    queue.add(task)
+

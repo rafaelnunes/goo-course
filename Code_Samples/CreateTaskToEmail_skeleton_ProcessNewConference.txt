@@ -1,0 +1,14 @@
+  @staticmethod
+  def _CreateTaskToEmailPotentialAttendees(conference_key_str):
+    parameters = {'conf_key': conference_key_str}
+    # create a queue from taskqueue.Queue()
+    queue =                  
+    # Development is not able to resolve the backend server target.
+    if os.environ['SERVER_SOFTWARE'].startswith('Development'):
+      task = taskqueue.Task(url='/notifyinterestedusers', params=parameters)
+    else:
+      task = taskqueue.Task(url='/notifyinterestedusers', params=parameters,
+          target='notify-backend')
+    # add task to queue using the add(task) method
+    queue.
+

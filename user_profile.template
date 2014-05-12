@@ -1,0 +1,8 @@
+{% extends "base.template" %}
+{% block content %}
+
+<h1>User Profile Page</h1>
+
+<p>Content TBD</p>
+
+{% endblock %}

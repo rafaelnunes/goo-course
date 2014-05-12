@@ -1,0 +1,38 @@
+class SaveConference(_BaseHandler):
+  def get(self):
+    self.redirect('/listconferences')
+
+  def post(self):
+    name = self.request.get('conf_name')
+    desc = self.request.get('conf_desc')
+    topic = self.request.get('topic')
+    city = self.request.get('city')
+    max_attendees = int(self.request.get('max_attendees'))
+    num_tix_available = max_attendees
+    # If start and end dates are not provided, use today's date as placeholders
+    start_date_param = self.request.get('start_date')
+    end_date_param = self.request.get('end_date')
+
+    if (start_date_param == ""):
+      start_date =  datetime.date.today()
+    else:
+      start_date = datetime.datetime.strptime(start_date_param, '%Y-%m-%d').date()
+
+    if (end_date_param == ""):
+      end_date = datetime.date.today()
+    else:
+      end_date = datetime.datetime.strptime(end_date_param, '%Y-%m-%d').date()
+    
+    conference = Conference(organizer = self.user.nickname(), name=name,
+      desc=desc, topic=topic, city=city,
+      max_attendees=max_attendees, num_tix_available=num_tix_available,
+      start_date=start_date, end_date=end_date
+      )
+    conference.save()
+    conference_key_str = str(conference.key())
+    db.put([Ticket(parent=conference,
+                   ticket_number=i,
+                   conference_name=name,
+                   conference_key_str=conference_key_str) for i in range(max_attendees)])
+    self.redirect('/showtickets?conf_name=%s&conf_key_str=%s' % (name, conference_key_str))
+

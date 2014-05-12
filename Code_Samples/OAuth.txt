@@ -1,0 +1,5 @@
+calendarauthdecorator = OAuth2Decorator(
+          client_id='157477866876.apps.googleusercontent.com',
+          client_secret='jmaFAtVLaVeUwt35RCEed3Te',
+          scope='https://www.googleapis.com/auth/calendar')
+

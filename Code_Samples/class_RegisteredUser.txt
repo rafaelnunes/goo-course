@@ -1,0 +1,6 @@
+class RegisteredUser(db.Model):
+  name = db.StringProperty()
+  main_email = db.StringProperty()
+  notification_email = db.StringProperty()
+  interests = db.StringListProperty()
+

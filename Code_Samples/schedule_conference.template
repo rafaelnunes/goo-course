@@ -1,0 +1,43 @@
+{% extends "base.template" %}
+{% block content %}
+
+<h1>Schedule a new conference</h1>
+<p>You are logged in as {{ user.nickname() }} </p>
+<form action="/saveconference" method=post>
+  <p><b>What is the title of your conference?</b><br></p>
+     <p><input name="conf_name" size="100"/></p>
+  <p><b>What is the topic of your conference?</b></p>
+  <p>
+  <select name="topic">
+  {% for topic in topics %}
+    <option value="{{ topic }}">{{ topic }}</option>
+  {% endfor %}
+  </select>
+  </p>
+
+  <p><b>Enter a summary of your conference.</b><br></p>
+     <p><textarea name="conf_desc" rows="6" cols="100"> 
+          Who should attend? What will they get out of it? 
+        </textarea>
+     </p>
+
+  <p><b>Where would you like to hold your conference?</b></p>
+  <p>
+  <select name="city"> 
+  {% for city in cities %}
+    <option value="{{ city }}">{{ city }}</option>
+  {% endfor %}
+  </select>
+  </p>
+
+  <p><b>What is the maximum number of attendees?</b><br></p>
+  <p><input name="max_attendees" value="5" /><i>Must be an integer</i></p>
+
+  <p><b>What date does your conference start?</b><br></p>
+     <p><input name="start_date" type="date"></p> 
+  <p><b>What date does your conference end?</b><br></p>
+     <p><input name="end_date" type="date"></p>
+    
+  <p><input type=submit value="Schedule conference" id=scheduleconference /></p>
+</form>
+{% endblock %}

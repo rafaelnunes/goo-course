@@ -1,0 +1,42 @@
+class ListConferencesPage(_BaseHandler):
+  def get(self):
+    # All conferences
+    # First TODO make changes in next 2 lines
+    #query = <GET ALL CONFERENCES>
+    #conferences = <RUN QUERY WITH LIMIT OF 25 RESPONSES>
+    #self.template_values['conferences'] = conferences
+
+    # Order by name
+    # First TODO add a sort order and re-run the query 
+    #query.<ORDER BY name>
+    #ordered_conferences = <RUN QUERY WITH LIMIT OF 25 RESPONSES>
+    #self.template_values['ordered_conferences'] = ordered_conferences
+
+    # Filter by city
+    # Second TODO add attribute filter. Filter for 'city = ' 'London'
+    # then remove # from the code passage
+    #query.<SET FILTER TO city = London>
+    #filtered_conferences = query.run(limit=25)
+    #self.template_values['filtered_conferences'] = filtered_conferences
+    
+    # Further Filter by topic
+    # Third TODO
+    #query.filter(<FILTER topic FOR 'Medical Innovations'>)
+    #london_medical_conferences = <RUN QUERY WITH RETURN LIMIT OF 25>
+    #self.template_values['london_medical_conferences'] = london_medical_conferences
+
+    # Filter on organizer too
+    # Fifth TODO
+    #query.filter('organizer =', self.user.nickname())
+    #filtered_by_organizer_conferences = query.run(limit=25)
+    #self.template_values['filtered_by_organizer_conferences'] = filtered_by_organizer_conferences
+
+    # Filter by number of max attendees
+    # Fourth TODO 
+    #query.filter(<SET max_attendees >= 50>)
+    #max_attendees_conferences = query.run(limit=25)
+    #self.template_values['max_attendees_conferences'] = max_attendees_conferences
+
+    template = jinja_environment.get_template('list_conferences.template')
+    self.response.out.write(template.render(self.template_values)) 
+

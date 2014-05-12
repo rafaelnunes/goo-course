@@ -1,0 +1,59 @@
+{% extends "base.template" %}
+{% block content %}
+
+{% macro write_header() -%}
+  <tr><th>Conference Name</th>
+      <th>City</th>
+      <th>Organizer</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Max Attendees</th>
+      <th>Review and Approve</th>
+  </tr>
+{%- endmacro %}
+
+{% macro write_conferences(conferences) -%}
+  {% for key in conferences.keys() %}  
+    <tr><td>{{ conferences[key].name|e }}</td>
+        <td>{{ conferences[key].city }}</td>
+        <td>{{ conferences[key].organizer|e }}</td>
+        <td>{{ conferences[key].start_date }}</td>
+        <td>{{ conferences[key].end_date }}</td>
+        <td>{{ conferences[key].max_attendees }}</td>
+        <td><form action="/reviewconferences" method="POST">
+            <input type="hidden" name="task_name" value="{{ key }}">
+            <input type="hidden" name="conf_name" value="{{ conferences[key].name }}">
+            <input type="submit" name="conf" value="Review completed" />
+            </form>
+        </td>
+     </tr>
+  {% endfor %}
+{%- endmacro %}
+
+{% macro write_table(conferences) -%}
+<p>
+<table cellpadding="5px" border="1"> 
+  {{ write_header() }}
+  {{ write_conferences(conferences) }}
+</table><br/><br/>
+</p>
+{%- endmacro %}
+
+<h3>Review Conferences</h3>
+{% if reviewed_msg %}
+{{ reviewed_msg }}
+{% elif conferences is defined %}
+<p>Every new conference must be reviewed by an administrator.</p>
+<p>Review the conferences listed here. Check that the details are complete.
+Send email to the organizer to provide a personal touch, and to start the conversation about billing.
+When you have completed the preliminary approval, approve the conference.
+</p>
+{{ write_table(conferences) }}
+{% endif %}
+<hr>
+<p>Check this button to list conferences that need to be reviewed</p>
+<form action="/reviewconferences" method="POST">
+  <p><input type="submit" value="Review New Conferences" name="reviewconference"/></p>
+</form>
+
+{% endblock %}

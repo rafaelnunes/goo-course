@@ -1,0 +1,14 @@
+class ReviewConferences(_BaseHandler):
+  @staticmethod
+  def _DeleteReviewTask(task_name):
+    logging.info('deleting %s' % task_name)
+    queue = taskqueue.Queue('review-conference-queue')
+    try:
+      task = queue.delete_tasks_by_name(task_name)
+      # delete_tasks_by_name returns a task and the Task.was_deleted property
+      # will be True if the task was deleted and # will be False for unknown and
+      # tombstoned task.
+      return task.was_deleted
+    except taskqueue.BadTaskStateError, e:
+      logging.error(e)
+      return False

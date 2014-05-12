@@ -1,0 +1,18 @@
+{% extends "base.template" %}
+{% block content %}
+
+<h1>Developer page</h1>
+<H2>Welcome {{ user_name }}</H2>
+
+<p>This page is for developers who are working on the application.</p>
+<p>This form lets you delete ALL entities of a given KIND</p>
+<form action="/developer" method="POST">
+  <p>Kind: <input value="Ticket" name="kind">
+    <select name="deleteall">
+      <option value="no">NO, leave my entities alone!!!!</option>
+      <option value="yes">Delete all entities of this kind</option>
+    </select>
+  <input type="submit" value="submit" />
+</form>
+
+{% endblock %}

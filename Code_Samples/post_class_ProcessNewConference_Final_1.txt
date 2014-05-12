@@ -1,0 +1,12 @@
+class ProcessNewConference(webapp2.RequestHandler):
+  def post(self):
+    conf_key = self.request.get('conf_key')
+    conference = db.get(db.Key(conf_key))
+    if conference:
+      ProcessNewConference._AnnounceConference(conference)
+      #ProcessNewConference._CreateTaskToEmailPotentialAttendees(conf_key)
+      #ProcessNewConference._SendConfToPullQueueForReview(conf_key)
+    else:
+      logging.error('Cannot find conference for %s' % conf_key)
+      self.response.set_status(500)
+

@@ -1,0 +1,11 @@
+class Conference(db.Model):
+  organizer = db.StringProperty()
+  name = db.StringProperty()
+  desc = db.TextProperty()
+  topic = db.StringProperty()
+  city = db.StringProperty()
+  max_attendees = db.IntegerProperty()
+  num_tix_available = db.IntegerProperty()
+  start_date = db.DateProperty()
+  end_date = db.DateProperty()
+

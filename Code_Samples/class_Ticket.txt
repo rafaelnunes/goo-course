@@ -1,0 +1,7 @@
+class Ticket(db.Model):
+  ticket_number = db.IntegerProperty()
+  status = db.StringProperty(default='Available')
+  conference_name = db.StringProperty()
+  conference_key_str = db.StringProperty()
+  owner = db.StringProperty()
+

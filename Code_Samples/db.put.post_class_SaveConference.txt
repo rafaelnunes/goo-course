@@ -1,0 +1,5 @@
+    conference_key_str = str(conference.key())
+    db.put([Ticket(
+                   ticket_number=i,
+                   conference_name=name,
+                   conference_key_str=conference_key_str) for i in range(max_attendees)])

@@ -1,0 +1,36 @@
+class Announcement(db.Model):
+  # create announcement as db.StringProperty()
+  announcement = 
+  # create time as db.DataTimeProperty()
+  time = 
+
+  @staticmethod
+  def SetLatestAnnouncement(announcement):
+    # put announcement in memcache
+    memcache.set('latestAnnouncement', announcement, 3600)
+    # create annoumcement entity with 
+    #        announcement = announcement
+    #        time = datetime.datetime.now()
+    entity = Announcement(announcement =                  , time =                   )
+    # put entity in datga store with put() method
+    ___Add_Command_here
+
+  @staticmethod
+  def GetLatestAnnouncement():
+    # Get announcement out of memcache.get('latestAnnouncement')
+    announcement = 
+    if announcement:
+      return announcement
+    else:
+      # query to get all Announcements (HINT: Announcement.all())
+      query = 
+      # order by time assending (-time)
+      query.              
+      #run the query and place return in result.
+      #get a limit of 1
+      result = 
+      try:
+        return iter(result).next().announcement
+      except StopIteration:
+        return 'ANNOUNCEMENT NOT FOUND'
+

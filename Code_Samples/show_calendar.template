@@ -1,0 +1,18 @@
+{% extends "base.template" %}
+{% block content %}
+<h1>Your calendar events</h1>
+
+<p>Logged in user is {{ current_user }} </p>
+
+{% for event in events %}  
+   <h3>{{ event.get('summary') }}</h3>
+   <p>organized by {{ event.get('organizer').get('email') }}</p> 
+   {% if (event.get('start').get('dateTime') != None ) %}
+      <p>scheduled for {{ event.get('start').get('dateTime') }}</p>
+   {% endif %}
+   {% if (event.get('start').get('date') != None) %}
+      <p>scheduled for {{ event.get('start').get('date') }}</p>
+   {% endif %}
+{% endfor %}
+
+{% endblock %} 

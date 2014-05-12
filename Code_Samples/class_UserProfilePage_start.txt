@@ -1,0 +1,8 @@
+class UserProfilePage(_BaseHandler):
+  def get(self):
+    topics = OrderedDict.fromkeys(TOPICS, '')
+    self.template_values['topics'] = topics
+    self.template_values['heading'] = 'Create a'
+    template = jinja_environment.get_template('user_profile.template')
+    self.response.out.write(template.render(self.template_values))
+

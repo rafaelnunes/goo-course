@@ -1,0 +1,5 @@
+{% extends "base.template" %}
+{% block content %}
+<h1>Venues Page</h1>
+<p>Content TBD</p>
+{% endblock %}

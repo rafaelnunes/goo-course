@@ -1,0 +1,18 @@
+  @staticmethod
+  def _EmailPotentialAttendees(conference):
+    # Create the message subject and body
+    subject = 'Conference you might be interested in: %s' % conference.name
+    msgBody = ("Hi! \n We want to let you know that a conference called %s "
+        "has been scheduled to start on %s in %s. We thought you would like "
+        "to know because you are interested in conferences about %s." %
+        (conference.name, conference.start_date.strftime('%Y/%m/%d'),
+         conference.city, conference.topic))
+
+    # Create a Query to get all the RegisteredUsers who are interested
+    # in the topic.
+    query = RegisteredUser.all()
+    query.filter('interests', conference.topic)
+    for user in query:
+      logging.info('%s is interested in %s' % (user.name, conference.topic))
+      NotifyInterestedUsers._SendMail(user, subject, msgBody)
+

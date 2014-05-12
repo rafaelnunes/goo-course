@@ -1,0 +1,54 @@
+  def post(self):
+    # If the 'taskname' parameter is set, it means the admin has approved
+    # a conference so delete the appropriate task. Attempt to get 'task_name' 
+    # from self.request.get(  )
+    task_name =                              
+    if task_name:
+      # webapp2.RequestHandler.get returns string as unicode.
+      # Need to convert it to ascii because delete_tasks_by_name
+      # expects ascii.
+      if ReviewConferences._DeleteReviewTask(task_name.encode('ascii')):
+        msg = ('Conference %s has been reviewed and approved.'
+                % self.request.get('conf_name'))
+      else:
+        msg = ('Conference %s has was not reviewed and approved. '
+               'Perhaps someone else has already approved it ?'
+                % self.request.get('conf_name'))
+      self.template_values['reviewed_msg'] = msg
+
+    # if the 'reviewconference' parameter is set, it means the admin
+    # has request to review new conferences.  Check to see if the
+    # reviewconfereces can be retrieved by
+    # self.request.get('reviewconference')
+    if                                     :
+      # Use taskqueue.Queue('review-conference-queue') to create a queue
+      queue =                                           
+      # Take ownership (lease) 4 tasks for 10 seconds.
+      # It is a good practice to catch DeadlineExceededError and TransientError.
+      # This example will randomly sleep a few seconds but in a production
+      # system, you should implement an exponential back-off strategy.
+      for attempt in range(3):
+        try:
+          tasks = queue.lease_tasks(10, 4)
+        except apiproxy_errors.DeadlineExceededError, e:
+          logging.info('DeadlineExceededError encountered')
+          time.sleep(random.randint(1, 5))
+        except taskqueue.TransientError, e:
+          logging.error('Transient error encountered')
+          time.sleep(random.randint(1, 5))
+        else:
+          break 
+      else:
+        logging.error('Failed to lease task from review-conference-queue')
+        self.response.set_status(500)
+        return
+
+      conferences = OrderedDict()
+      for task in tasks:
+        conference_key = task.payload
+        conference = db.get(db.Key(conference_key))
+        conferences[task.name] = conference
+      self.template_values['conferences'] = conferences
+      
+    template = jinja_environment.get_template('review_conferences.template')
+    self.response.out.write(template.render(self.template_values)) 

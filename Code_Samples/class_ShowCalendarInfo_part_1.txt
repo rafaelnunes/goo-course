@@ -1,0 +1,5 @@
+class ShowCalendarInfo(_BaseHandler):
+  @calendarauthdecorator.oauth_required
+  def get(self):
+    self.response.out.write("We are authenticated, that is good to know")
+
