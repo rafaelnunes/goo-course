@@ -1,4 +1,4 @@
-application: goo-cloud-course
+application: educando-public
 version: 2
 
 runtime: python27
