@@ -1,0 +1,96 @@
+{% extends "app/base.html" %}
+
+{% block custom_meta %}
+<meta property="og:title" content="Educando"/>
+<meta property="og:url" content="http://{{ settings.HOST_NAME }}"/>
+<meta property="og:description" content="Teach what you know. Learn anything."/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Educando"/>
+<meta property="og:image" content="http://{{ settings.HOST_NAME}}/assets/img/educando_ico.png"/>
+{% endblock %}
+
+{% block title%}Educando{% endblock %}
+
+
+{% block page_content %}
+<style type="text/css">
+/* CSS Hack for hiding the LIKE count */
+.nav-container2 { width:940px; margin:auto; height:30px;}
+.social-media-list { width: 393px; margin-left: 0px;}
+.social-media-list li { display:block; float: left; text-align:center; margin: 0 auto; padding-right: 5px}
+</style>
+
+<div class="page-content">
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+
+			<div class="error-container">
+				<div class="well">
+					<h1 class="grey lighter smaller">
+						<span class="blue bigger-110">
+							Ensine
+						</span>
+						O que você sabe.
+						&nbsp;
+						<span class="blue bigger-110">
+							Aprenda
+						</span>
+						Tudo o que quiser.
+					</h1>
+
+					<hr>
+					<h3 class="lighter smaller">
+						Aqui você pode hospedar seus cursos, alcançar uma grande audiência e ajudar outras pessoas com o que você sabe
+					</h3>
+
+					<div class="space"></div>
+
+					<div>
+						<h4 class="lighter smaller">Login ou Registre-se para começar a usar a aplicação</h4>
+
+					</div>
+					<div class="space"></div>
+					<hr>
+					<div class="nav-container2">
+						<ul class="social-media-list">
+							<li>
+								<div class="g-plusone" data-size="standard" data-href="http://{{ settings.HOST_NAME }}" data-recommendations="false" data-annotation="none"></div>
+							</li>
+							<li>
+							<div class="fb-like" data-href="http://{{ settings.HOST_NAME }}" 
+								data-width="47px" data-colorscheme="light" data-layout="standard" 
+								data-action="like" data-show-faces="false" data-send="false"></div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div>
+{% endblock %}
+
+{% block custom_footer_script %}
+<div id="fb-root"></div>
+<script src="/assets/js/educando/subject.js"></script>
+<script type="text/javascript">
+(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1389243914644183";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+(function() {
+	var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	po.src = 'https://apis.google.com/js/plusone.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>
+{% endblock %}

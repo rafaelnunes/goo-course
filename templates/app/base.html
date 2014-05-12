@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" {% if use_angular %} ng-app="eduka" {% endif %}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="overview &amp; stats" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		{% block custom_meta %}
+		{% endblock %}
+
+		<title>{% block title %}Dashboard{% endblock %}</title>
+
+		<!-- basic styles -->
+		{% block common_scripts %}
+		<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+		<link rel="icon" href="/favicon.ico" type="image/x-icon">
+		<link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="/assets/css/font-awesome.min.css" />
+
+		<!--[if IE 7]>
+		  <link rel="stylesheet" href="/assets/css/font-awesome-ie7.min.css" />
+		<![endif]-->
+
+		<!-- page specific plugin styles -->
+
+		<!-- fonts -->
+
+		<link rel="stylesheet" href="/assets/css/ace-fonts.css" />
+
+		<!-- ace styles -->
+		<link rel="stylesheet" href="/assets/css/jquery.gritter.css">
+		<link rel="stylesheet" href="/assets/css/ace.min.css" />
+		<link rel="stylesheet" href="/assets/css/ace-rtl.min.css" />
+		<link rel="stylesheet" href="/assets/css/ace-skins.min.css" />
+		<link rel="stylesheet" href="/static/css/educando.css" />
+
+		<!--[if lte IE 8]>
+		  <link rel="stylesheet" href="/assets/css/ace-ie.min.css" />
+		<![endif]-->
+
+		<!-- inline styles related to this page -->
+
+		<!-- ace settings handler -->
+		<!--[if !IE]> -->
+		<script type="text/javascript">
+			window.jQuery || document.write("<script src='/assets/js/jquery-2.0.3.min.js'>"+"<"+"/script>");
+		</script>
+
+		<!-- <![endif]-->
+
+		<!--[if IE]>
+		<script type="text/javascript">
+		 window.jQuery || document.write("<script src='/assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+		</script>
+		<![endif]-->
+		<script src="/assets/js/ace-extra.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.3/angular.min.js"></script>
+
+		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+		<!--[if lt IE 9]>
+		<script src="/assets/js/html5shiv.js"></script>
+		<script src="/assets/js/respond.min.js"></script>
+		<![endif]-->
+		{% endblock %}
+
+		{% block custom_common_scripts %}
+		{% endblock %}
+
+	</head>
+
+	<body class="navbar-fixed breadcrumbs-fixed">
+		{% block navbar %}
+
+		<div class="navbar navbar-default navbar-fixed-top" id="navbar">
+
+			<div class="navbar-container" id="navbar-container">
+				<div class="navbar-header pull-left">
+					<a href="#" class="navbar-brand">
+						<small>
+							<i class="icon-leaf"></i>
+						</small>
+					</a><!-- /.brand -->
+				</div><!-- /.navbar-header -->
+
+				<div class="navbar-header center">
+					<a href="#" class="navbar-brand">
+						<small>
+							{{ settings.APP_TITLE }}
+						</small>
+					</a>
+				</div> 
+
+				<div class="navbar-header pull-right" role="navigation">
+					<ul class="nav ace-nav">
+						{% if logged %}
+						<li class="purple">
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<i class="icon-bell-alt icon-animated-bell"></i>
+								<span class="badge badge-important" id="notify-size">0</span>
+							</a>
+
+							<ul class="pull-right dropdown-navbar navbar-pink dropdown-menu dropdown-caret dropdown-close" id="ul-notify" style="overflow: hidden; width: 460px">
+								<li class="dropdown-header"  id="notify-header-size">
+									<i class="icon-warning-sign"></i>
+									0 Notificações
+								</li>
+							</ul>
+						</li>
+						<li>
+							<a data-toggle="dropdown" class="dropdown-toggle" href="#">
+								<i class="icon-envelope icon-animated-vertical"></i>
+								<span class="badge badge-success" style="background-color: #438eb9!important" id="messages-size">0</span>
+							</a>
+
+							<ul class="pull-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close" id="ul-messages">
+								<li class="dropdown-header" id="messages-header-size">
+									<i class="icon-envelope-alt"></i>
+									0 Mensagens
+								</li>
+							</ul>
+						</li>
+						{% endif %}
+
+						<li class="light-blue">
+							{% if logged %}
+							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
+								<img class="nav-user-photo" id="avatar-nav" src="{{ logged|avatar_url('200')}}" style="max-height: 50px;" alt=""/>
+								<span class="user-info">
+									<small>Olá,</small>
+									{{ logged.name }}
+								</span>
+
+								<i class="icon-caret-down"></i>
+							</a>
+
+							<ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+								<li>
+									<a href="{{ uri_for('load_settings') }}">
+										<i class="icon-cog"></i>
+										Settings
+									</a>
+								</li>
+
+								<li>
+									<a href="{{ uri_for('profile') }}">
+										<i class="icon-user"></i>
+										Profile
+									</a>
+								</li>
+								<li class="divider"></li>
+
+								<li>
+									<a href="/logout">
+										<i class="icon-off"></i>
+										Sair
+									</a>
+								</li>
+								{% else %}
+									<a href="{{ uri_for('login')}}">
+										<i class="icon-lock"></i>
+										Login/Registrar
+									</a>
+								{% endif %}
+							</ul>
+						</li>
+					</ul><!-- /.ace-nav -->
+				</div><!-- /.navbar-header -->
+			</div><!-- /.container -->
+		</div>
+
+		{% endblock %}
+
+		<div class="main-container" id="main-container">
+			<script type="text/javascript">
+				try{ace.settings.check('main-container' , 'fixed')}catch(e){}
+			</script>
+
+			<div class="main-container-inner">
+				<a class="menu-toggler" id="menu-toggler" href="#">
+					<span class="menu-text"></span>
+				</a>
+				{% block sidebar %}
+				<div class="sidebar sidebar-fixed" id="sidebar">
+					<div class="sidebar-shortcuts" id="sidebar-shortcuts">
+						<div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+							<a href="{{ uri_for('search') }}" class="btn btn-success" data-rel="tooltip" data-original-title="Follow Course">
+								<i class="icon-search"></i>
+							</a>
+
+							<a href="{{ uri_for('people') }}" class="btn btn-warning">
+								<i class="icon-group"></i>
+							</a>
+
+							<a href="{{ uri_for('load_settings') }}" class="btn btn-danger">
+								<i class="icon-cogs"></i>
+							</a>
+						</div>
+
+						<div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+							<span class="btn btn-success"></span>
+
+							<span class="btn btn-warning"></span>
+
+							<span class="btn btn-danger"></span>
+						</div>
+					</div><!-- #sidebar-shortcuts -->
+
+
+					<ul class="nav nav-list">
+						<li class="active">
+							<a href="{{ uri_for('dashboard')}}">
+								<i class="icon-dashboard"></i>
+								<span class="menu-text"> Dashboard </span>
+							</a>
+						</li>
+						{%if logged %}
+							{% if logged.is_admin() or logged.is_staff() %}
+							<li>
+								<a href="{{ uri_for('search_people')}}">
+									<i class="icon-group"></i>
+									<span class="menu-text"> Usuários </span>
+								</a>
+							</li>
+							{% endif %}
+							<li>
+								<a href="{{ uri_for('subjects')}}">
+									<i class="icon-book"></i>
+									<span class="menu-text"> Meus Cursos </span>
+								</a>
+							</li>
+							<li>
+								<a href="{{ uri_for('calendar') }}">
+									<i class="icon-calendar"></i>
+
+									<span class="menu-text">
+										Calendário
+									</span>
+								</a>
+							</li>
+						{% endif %}
+					</ul><!-- /.nav-list -->
+
+					<div class="sidebar-collapse" id="sidebar-collapse">
+						<i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
+					</div>
+
+					<script type="text/javascript">
+						try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+					</script>
+				</div>
+				{% endblock %}
+
+				<div class="main-content">
+					<div class="breadcrumbs breadcrumbs-fixed" id="breadcrumbs">
+						<ul class="breadcrumb">
+							{% block breadcumb_items %}
+							{% endblock %}
+						</ul><!-- .breadcrumb -->
+
+						<div class="nav-search" id="nav-search">
+						</div><!-- #nav-search -->
+					</div>
+
+					{% block page_content %}
+
+					{% endblock%}
+				</div><!-- /.main-content -->
+			</div><!-- /.main-container-inner -->
+
+		</div><!-- /.main-container -->
+
+		<!-- basic scripts -->
+
+		<script type="text/javascript">
+			var None = false;
+			if("ontouchend" in document) document.write("<script src='/assets/js/jquery.mobile.custom.min.js'>"+"<"+"/script>");
+			angular.module('eduka', []).config(function($interpolateProvider) {
+				$interpolateProvider.startSymbol('${');
+    			$interpolateProvider.endSymbol('}');
+			});
+		</script>
+		<script src="/assets/js/bootstrap.min.js"></script>
+		<script src="/assets/js/typeahead-bs2.min.js"></script>
+
+		<!-- page specific plugin scripts -->
+
+		<!--[if lte IE 8]>
+		  <script src="/assets/js/excanvas.min.js"></script>
+		<![endif]-->
+
+		<script src="/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+		<script src="/assets/js/jquery.ui.touch-punch.min.js"></script>
+		<script src="/assets/js/jquery.slimscroll.min.js"></script>
+		<script src="/assets/js/jquery.gritter.min.js"></script>
+		<script src="/assets/js/bootbox.min.js"></script>
+
+		<!-- ace scripts -->
+
+		<script src="/assets/js/ace-elements.min.js"></script>
+		<script src="/assets/js/ace.min.js"></script>
+		<script src="/assets/js/mustache.js"></script>
+		<script src="/assets/js/eduka.js"></script>
+
+		<script type="text/javascript">
+			if (typeof ace.data === "undefined" || ace.data === null) {
+				ace.data = new ace.data_storage();
+			}
+
+			try{
+				ace.data.set('GOOGLE_CLIENT_ID' , '{{settings.GOOGLE_CLIENT_ID}}');
+				ace.data.set('GOOGLE_CLIENT_SECRET' , '{{settings.GOOGLE_CLIENT_SECRET}}');
+			}catch(e){
+				console.error('ACE data not loaded')
+			}
+		</script>
+
+		{% block custom_footer_script %}
+		{% endblock %}
+
+		{% raw %}
+		<script id="tmpl_notification" type="text/template">
+		<li>
+			<a href="#" style="text-align: left;">
+				<i class="btn btn-xs btn-primary {{ notify.ntype }}"></i>
+				<span style="word-wrap: break-word;">{{ notify.text }}<span>
+			</a>
+		</li>
+		</script>
+
+		<script id="tmpl_message" type="text/template">
+			<li>
+				<a href="#">
+					<img src="{{ message.avatar }}" class="msg-photo"/>
+					<span class="msg-body">
+						<span class="msg-title">
+							<span class="blue">{{ message.sender }}</span>
+							{{ message.subject }}
+						</span>
+
+						<span class="msg-time">
+							<i class="icon-time"></i>
+							<span>{{ message.date }}</span>
+						</span>
+					</span>
+				</a>
+			</li>
+		</script>
+		{% endraw %}
+	</body>
+</html>

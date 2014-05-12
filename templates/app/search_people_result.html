@@ -1,0 +1,60 @@
+{% extends 'app/base.html' %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+	<a href="#">Início</a>
+</li>
+<li class="active">
+	Buscar
+</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content" ng-controller="UserController">
+	<div class="row">
+		<!-- Subject listing -->
+		<div class="col-sm-6">
+			<h3 class="header smaller lighter green">
+				<span>Pessoas</span>
+			</h3>
+			{% for profile in profiles %}
+			<div class="profile-activity clearfix">
+				<div>
+					<img class="pull-left" src="{{ profile|avatar_url('80')}}" style="max-width: 80px;" ng-click="show_profile()">
+					<a class="user" href="{{ uri_for('profile_by_user', profile_id=profile.key.id())}}"> {{ profile.full_name }} </a>
+					<div class="time">
+						<p>{{ profile.short_about }}</p>
+						<p>{{ profile.TYPE_CHOICES[profile.user_type] }} </p>
+					</div>
+					<div class="space"></div>
+				</div>
+			</div>
+			{% endfor %}
+			{% if not profiles %}
+				<h4>Não achamos ninguém com a busca: '{{ search_term }}'. <a href="{{ uri_for('people') }}">Tentar agum outro?</a></h4>
+				<ul class="list-unstyled spaced inline bigger-110 margin-15">
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Checar a URL por erros
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Ler o FAQ
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Conte-nos o que aconteceu de errado
+					</li>
+				</ul>
+			{% endif %}
+		</div>
+	</div><!-- /.row -->
+</div><!-- /.page-content -->
+{% endblock %}
+
+{% block custom_footer_script %}
+<script src="/assets/js/educando/users.js"></script>
+{% endblock %}

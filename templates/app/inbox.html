@@ -1,0 +1,254 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Inbox Message{% endblock %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+</li>
+<li>Inbox Messages</li>
+{% endblock %}
+
+
+{% block page_content %}
+<div class="page-content">
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="tabbable">
+						<div class="tab-content no-border no-padding">
+							<div class="tab-pane in active">
+								<div class="message-container">
+									<div id="id-message-list-navbar" class="message-navbar align-center clearfix">
+										<div class="message-bar">
+											<div class="message-infobar" id="id-message-infobar">
+												<span class="blue bigger-150">Caixa de Entrada</span>
+											</div>
+										</div>
+
+											<div class="nav-search minimized">
+												<form class="form-search">
+													<span class="input-icon">
+														<input type="text" autocomplete="off" class="input-small nav-search-input" placeholder="Buscar...">
+														<i class="icon-search nav-search-icon"></i>
+													</span>
+												</form>
+											</div>
+										</div>
+									</div>
+
+									<div id="id-message-item-navbar" class="hide message-navbar align-center clearfix">
+										<div class="message-bar">
+											<div class="message-toolbar">
+												<a href="#" class="btn btn-xs btn-message modalIt" data-target="#modal-sendmessage">
+													<i class="icon-reply bigger-110"></i>
+													<span class="bigger-110">Responder</span>
+												</a>
+
+												<a href="#" class="btn btn-xs btn-danger del-message">
+													<i class="icon-trash bigger-110"></i>
+													<span class="bigger-110">Remover</span>
+												</a>
+											</div>
+										</div>
+
+										<div>
+											<div class="messagebar-item-left">
+												<a href="#" class="btn-back-message-list">
+													<i class="icon-arrow-left blue bigger-110 middle"></i>
+													<b class="bigger-110 middle">Voltar</b>
+												</a>
+											</div>
+										</div>
+									</div>
+
+									<div class="message-list-container">
+										{% for message in messages %}
+										<div class="message-list" id="message-list">
+											<div class="message-item message-unread">
+												<label class="inline">
+													<input type="checkbox" class="ace">
+													<span class="lbl"></span>
+												</label>
+
+												<span class="sender" >{{ message.sender.get().full_name }} </span>
+												<span class="time">{{ message.created_at|dateformat}}</span>
+
+												<span class="summary">
+													<span class="text message_subject" data-message="{{ message.key.id() }}">
+														{{ message.subject }}
+													</span>
+												</span>
+											</div>
+										</div>
+										{% endfor %}
+
+									</div><!-- /.message-list-container -->
+									<div id="message-viewer"></div>
+
+									<div class="message-footer clearfix">
+										<div class="pull-left"> {{ messages|length}} mensagens no total </div>
+									</div>
+								</div><!-- /.message-container -->
+							</div><!-- /.tab-pane -->
+						</div><!-- /.tab-content -->
+					</div><!-- /.tabbable -->
+				</div><!-- /.col -->
+			</div><!-- /.row -->
+			<!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+	</div>
+{% endblock %}
+
+{% block custom_footer_script %}
+<script type="text/javascript">
+//display first message in a new area
+$(document).ready(function(){
+	//show message list (back from writing mail or reading a message)
+	show_list = function() {
+		$('.message-navbar').addClass('hide');
+		$('#id-message-list-navbar').removeClass('hide');
+
+		$('.message-footer').addClass('hide');
+		$('.message-footer:not(.message-footer-style2)').removeClass('hide');
+
+		$('.message-list-container').removeClass('hide');
+		$('#message-viewer').empty();
+		//hide the message item / new message window and go back to list
+	}
+
+	$('.message_subject').on('click', function() {
+		//show the loading icon
+		$('.message-container').append('<div class="message-loading-overlay"><i class="icon-spin icon-spinner orange2 bigger-160"></i></div>');
+		
+		$('.message-inline-open').removeClass('message-inline-open').find('.message-content').remove();
+
+		var message_list = $(this).closest('.message-list');
+
+		$.ajax({
+			url: '/view-message',
+			type: 'POST',
+			dataType: 'json',
+			data: {
+				'message_id': $(this).data('message'),
+			},
+			success: function(response){
+				$('.message-container').find('.message-loading-overlay').remove();
+				$('.message-navbar').addClass('hide');
+				$('#id-message-item-navbar').removeClass('hide');
+				$('.message-footer').addClass('hide');
+				$('.message-footer-style2').removeClass('hide');
+
+				//add scrollbars to .message-body
+				$('.message-content .message-body').slimScroll({
+					height: 200,
+					railVisible:true
+				});
+				$('.message-list-container').addClass('hide');
+
+				var tmpl = Mustache.render($('#tmpl_viewmessage').html(), {'message': response.message });
+				$('#message-viewer').append(tmpl);
+
+				var tmpl_modal = Mustache.render($('#tmpl_modalmessage').html(), {'message': response.message });
+				$('body').append(tmpl_modal);
+			},
+			error: function(err){
+				$.gritter.add({
+						title: 'Error loading message',
+						text: 'Sorry about that, we are already looking into this.',
+						class_name: 'gritter-error gritter-light'
+					});
+				$('.message-container').find('.message-loading-overlay').remove();
+			},
+		});
+	});
+
+	$('.del-message').click(function(evt){
+		evt.preventDefault();
+		$('#del-message-form').submit();
+
+	});
+});
+
+//back to message list
+$('.btn-back-message-list').on('click', function(e) {
+	e.preventDefault();
+	show_list();
+	$('#inbox-tabs a[data-target="inbox"]').tab('show'); 
+});
+</script>
+
+
+{% raw %}
+<script id="tmpl_viewmessage" type="text/template">
+<div class="message-content" id="id-message-content">
+	<form id="del-message-form" action="/delmessage" methdo="POST">
+		<input type="hidden" name="message_id" id="message_id" value="{{ message.id }}">
+	</form>
+	<div class="message-header clearfix">
+		<div class="pull-left">
+			<img class="middle" src="{{ message.avatar }}">
+			&nbsp;
+			<a href="/profile/{{ message.sender_id }}" class="sender">{{ message.sender }}</a>
+
+			&nbsp;
+			<i class="icon-time bigger-110 orange middle"></i>
+			<span class="time">{{ message.date }}</span>
+		</div>
+	</div>
+
+	<div class="hr hr-double"></div>
+
+	<div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 200px;"><div class="message-body" style="overflow: hidden; width: auto; height: 200px;">
+		<p>
+			{{ message.text }}
+		</p>
+
+	</div><div class="slimScrollBar ui-draggable" style="background-color: rgb(0, 0, 0); width: 7px; position: absolute; top: 0px; opacity: 0.4; display: none; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px; z-index: 99; right: 1px; height: 200px; background-position: initial initial; background-repeat: initial initial;"></div><div class="slimScrollRail" style="width: 7px; height: 100%; position: absolute; top: 0px; display: none; border-top-left-radius: 7px; border-top-right-radius: 7px; border-bottom-right-radius: 7px; border-bottom-left-radius: 7px; background-color: rgb(51, 51, 51); opacity: 0.2; z-index: 90; right: 1px; background-position: initial initial; background-repeat: initial initial;"></div></div>
+</div>
+</script>
+
+<script id="tmpl_modalmessage" type="text/template">
+<div class="modal fade" id="modal-sendmessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Enviar Mensagem</h4>
+    </div>
+    <div class="modal-body" style="padding-bottom: 40px;">
+      	<input type="hidden" name="message_to" id="message_to" value="{{ message.sender_id }}">
+		<div class="form-group">
+			<label class="col-sm-3 control-label no-padding-right" for="form-field-subject">Assunto:</label>
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="input-icon block col-xs-12 no-padding">
+					<input maxlength="100" type="text" class="col-xs-12" name="subject" id="message_subject" value="RE: {{ message.subject }}">
+				</div>
+			</div>
+		</div>
+		<div class="space"></div>
+		<div class="space"></div>
+
+		<div class="form-group below10">
+			<label class="col-sm-3 control-label no-padding-right" for="form-field-subject">Mensagem:</label>
+
+			<div class="col-sm-9">
+				<textarea id="message_text" class="form-control"></textarea>
+			</div>
+		</div>
+
+		<div class="space"></div>
+    </div>
+    <div class="modal-footer">
+      <a href="#" onclick="send_message()"><button type="button" class="btn btn-primary btn-success top10">Enviar</button></a>
+    </div>
+  </div>
+</div>
+</div>
+</script>
+{% endraw %}
+{% endblock %}

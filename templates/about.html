@@ -1,0 +1,37 @@
+{% extends "app/base.html" %}
+
+{% block page_content %}
+<style type="text/css">
+.all-strong{ font-weight: bold}
+</style>
+<div class="page_content">
+	<div class="left20">
+		<h3>Following a course</h3>
+		<p>You can see all courses you follow on yout dashboard</p>
+		<p>When following a course, you have access to all its classes and receive notifications for new events</p>
+		<p>When watching a Youtube video, you can write annotations on it to watch later(annotations are synchronized with video time)</p>
+		<p>You can download class documents</p>
+		<p>For any question related to class, you have a 'comments' area on every class. Or even just to discuss about it</p>
+		<p>ou can also send a message to the person who teach the class through his profile page</p>
+	</div>
+
+	<div class="left20">
+		<h3>Creating a course</h3>
+		<p>You can create a new course through the 'My Courses' link on the left nav bar</p>
+		<p>Each course can contain as much classes as you need</p>
+		<p>Each classe will contain videos from Youtube, Uploaded documents, Google Drive documents and additional resources as hyperlinks</p>
+		<p>You can also start a live class thourgh Hangout OnAir, the recorded class will be available as a class video after hangout end</p>
+		<p>Classes has a special 'comments' area for students make questions or discuss about it</p>
+		<p>You can add an calendar event associated to a course, like: 'New Live class'</p>
+	</div>
+
+	<div class="left20 all-strong">
+		<h3>APIs used</h3>
+		<p>Google Appengine(TaskQueue/Deferred, Email, Images, Blobstore, Memcache, Search API, URL Fetch)</p>
+		<p>Youtube API</p>
+		<p>Google Calendar API</p>
+		<p>Hangout API</p>
+		<p>Google Drive API</p>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends 'app/base.html' %}
+
+{% block page_content %}
+<style type="text/css">
+/* CSS Hack for hiding the LIKE count */
+.nav-container2 { width:940px; margin:auto; height:30px;}
+.social-media-list { width: 393px; margin-left: 0px;}
+.social-media-list li { display:block; float: left; text-align:center; margin: 0 auto; padding-right: 5px}
+</style>
+
+<div class="page-content">
+	<div class="row">
+		<!-- Subject listing -->
+		<div class="col-sm-6">
+			<h3 class="header smaller lighter green">
+				<span>Cursos que estou acompanhando</span>
+			</h3>
+			{% for subject in subjects %}
+			<div class="well well-lg" id="div-course-{{ subject.key.id() }}">
+				<h4>
+					<a href="/classes/{{ subject.key.id() }}">{{ subject.title }}</a>
+					{% if logged.is_following(subject) %}
+					<a class="unfollow-course orange" data-target="{{ subject.key.id() }}" href="#" data-rel="tooltip" data-original-title="Acompanhando Curso - click para cancelar">
+							<i class="icon-star"></i>
+						</a>
+					{% else %}
+						<a class="follow-course grey" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Acompanhar Curso">
+							<i class="icon-star-empty"></i>
+						</a>
+					{% endif %}
+
+					{% if subject.owner == logged.key %}
+						<a class="del-course red" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Remover Curso">
+							<i class="icon-trash"></i>
+						</a>
+					{% endif %}
+				</h4>
+				<p>{{ subject.description }}</p>
+				<div class="nav-container2">
+					<ul class="social-media-list">
+						<li>
+							<div class="g-plusone top20" data-size="standard" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" data-recommendations="false" data-annotation="none"></div>
+						</li>
+						<li>
+						<div class="fb-like" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" 
+							data-width="47px" data-colorscheme="light" data-layout="standard" 
+							data-action="like" data-show-faces="false" data-send="false"></div>
+						</li>
+					</ul>
+				</div>
+			</div>
+			{% endfor %}
+			{% if not subjects %}
+				<h4 class="bottom20">Parece que você não esta acompanhando nenhum curso. <a href="{{ uri_for('search') }}">Busque</a> por algum assunto do seu interesse para começar.</h4>
+
+				{% if most_followed %}
+					<h4 class="bottom20">Ou...</h4>
+					<h4>Dê uma olhada nos nossos cursos mais acessados</h4>
+					{% for subject in most_followed %}
+						<div class="well well-lg" id="div-course-{{ subject.key.id() }}">
+							<h4>
+								<a href="/classes/{{ subject.key.id() }}">{{ subject.title }}</a>
+								{% if logged.is_following(subject) %}
+								<a class="unfollow-course orange" data-target="{{ subject.key.id() }}" href="#" data-rel="tooltip" data-original-title="Acompanhando Curso - click para cancelar">
+										<i class="icon-star"></i>
+									</a>
+								{% else %}
+									<a class="follow-course grey" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Acompanhar Curso">
+										<i class="icon-star-empty"></i>
+									</a>
+								{% endif %}
+
+								{% if subject.owner == logged.key %}
+									<a class="del-course red" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Remover Curso">
+										<i class="icon-trash"></i>
+									</a>
+								{% endif %}
+							</h4>
+							<p>{{ subject.description }}</p>
+							<div class="nav-container2">
+								<ul class="social-media-list">
+									<li>
+										<div class="g-plusone top20" data-size="standard" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" data-recommendations="false" data-annotation="none"></div>
+									</li>
+									<li>
+									<div class="fb-like" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" 
+										data-width="47px" data-colorscheme="light" data-layout="standard" 
+										data-action="like" data-show-faces="false" data-send="false"></div>
+									</li>
+								</ul>
+							</div>
+						</div>
+					{% endfor %}
+				{% endif %}
+			{% endif %}
+		</div>
+
+		<!-- New subject form -->
+		<div class="col-xs-12 col-sm-6 {% if not alerts %}hide {% endif %}" id="dv-subject-form">
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4>Novo Curso</h4>
+				</div>
+
+				<div class="widget-body">
+					<div class="widget-main">
+						{% if alerts %}
+						<div class="alert alert-danger padding10">
+							<button type="button" class="close" data-dismiss="alert">
+								<i class="icon-remove"></i>
+							</button>
+							{% for alert in alerts %}
+								<span class="bottom5">{{ alert|safe }}</span>
+							{% endfor %}
+							<br>
+						</div>
+						{% endif %}
+						<form class="form-horizontal" action="/subject/add" method="POST">
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="form-field-1">Título</label>
+								<div class="col-sm-9">
+									<input type="text" id="subject_title" name="subject_title" placeholder="Ex: Calculus I, Algorithms, etc" class="col-xs-10 col-sm-12">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="subject-desc">Descrição</label>
+								<div class="col-sm-9">
+									<textarea class="form-control" id="subject-desc" style="height: 200px;"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="subject-type">Pagamento</label>
+								<div class="col-sm-9">
+									<select class="" id="subject-type" style="width: 120px;">
+										<option value="1">Livre</option>
+									</select>
+								</div>
+							</div>
+							<div class="clearfix form-actions bottom5 top5">
+								<div class="col-md-offset-3 col-md-9">
+									<button class="btn btn-info" type="submit">
+										<i class="icon-ok bigger-110"></i>
+										Enviar
+									</button>
+									&nbsp; &nbsp; &nbsp;
+									<button class="btn btn-danger toggleIt" data-target="#dv-subject-form">
+										<i class="icon-remove bigger-110"></i>
+										Cancelar
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div><!-- /.row -->
+</div><!-- /.page-content -->
+{% endblock %}
+
+{% block custom_footer_script %}
+<div id="fb-root"></div>
+<script src="/assets/js/educando/subject.js"></script>
+<script type="text/javascript">
+(function(d, s, id) {
+	var js, fjs = d.getElementsByTagName(s)[0];
+	if (d.getElementById(id)) return;
+	js = d.createElement(s); js.id = id;
+	js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=1389243914644183";
+	fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
+<script type="text/javascript">
+(function() {
+	var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	po.src = 'https://apis.google.com/js/plusone.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+</script>
+{% endblock %}

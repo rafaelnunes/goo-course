@@ -1,0 +1,57 @@
+{% extends 'app/base.html' %}
+
+{% block page_content %}
+
+{% if search_people %}
+<div class="left20">
+	<h1 class="grey lighter smaller">
+		<span class="blue bigger-125">
+			<i class="icon-book"></i>
+			Aprenda
+		</span>
+		algo novo hoje
+	</h1>
+
+	<hr>
+
+	<h3 class="lighter smaller">Alguém que você gostaria de aprender?</h3>
+
+	<div class="space"></div>
+
+	<form class="form-search" action="{{ uri_for('search_people') }}" method="GET">
+		<span class="input-icon align-middle">
+			<i class="icon-search"></i>
+
+			<input type="text" class="search-query" placeholder="Name, Email..." style="width: 280px;" name="q">
+		</span>
+		<button class="btn btn-sm">Buscar!</button>
+	</form>
+</div>
+{% else %}
+<div class="left20">
+	<h1 class="grey lighter smaller">
+		<span class="blue bigger-125">
+			<i class="icon-book"></i>
+			Aprenda
+		</span>
+		algo novo hoje
+	</h1>
+
+	<hr>
+
+	<h3 class="lighter smaller">O que você gostaria de aprender?</h3>
+
+	<div class="space"></div>
+
+	<form class="form-search" action="{{ uri_for('search_subject') }}" method="GET">
+		<span class="input-icon align-middle">
+			<i class="icon-search"></i>
+
+			<input type="text" class="search-query" placeholder="Programming, Math, History..." style="width: 280px;" name="q">
+		</span>
+		<button class="btn btn-sm">Buscar!</button>
+	</form>
+</div>
+{% endif %}
+
+{% endblock %}

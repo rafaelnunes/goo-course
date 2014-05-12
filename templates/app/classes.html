@@ -1,0 +1,225 @@
+{% extends 'app/base.html' %}
+
+{% block custom_meta %}
+<meta property="og:title" content="{{ subject.title }}"/>
+<meta property="og:url" content="http://{{ settings.HOST_NAME}}{{ uri_for('classes_by_subject', subject_id=subject.key.id()) }}"/>
+<meta property="og:description" content="{{ subject.description }}"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="Educando"/>
+<meta property="og:image" content="http://{{ settings.HOST_NAME}}/assets/img/educando_ico.png"/>
+{% endblock %}
+
+
+{% block title %}{{ subject.title }} classes {% endblock %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+	<a href="/dashboard">Cursos</a>
+</li>
+<li>
+	<span>{{ subject.title}}</span>
+</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+	<div class="row">
+		<div class="col-sm-6">
+			<h3 class="header smaller lighter green">
+				<span>Aulas</span>
+				<span class="btn-group right below10">
+					{% if subject.is_admin(logged) %}
+					<button data-target="#dv-class-form" class="btn btn-warning btn-sm toggleIt">
+						Adicionar uma nova aula
+					</button>
+					{% else %}
+						{% if logged %}
+						<button data-target="#dv-invite-form" class="btn btn-warning btn-sm toggleIt">
+							Convide um amigo&nbsp;
+							<i class="icon-envelope"></i>
+						</button>
+						{% endif %}
+					{% endif %}
+
+				</span>
+			</h3>
+			<div class="space-4">
+
+			</div>
+			{% for cls  in classes %}
+			<div class="well well-lg">
+				<h4 class="blue">
+					<a href="/class/{{ cls.key.id() }}">
+						{{ cls.title }}
+						<i class="icon-external-link"></i>
+					</a>
+				</h4>
+				<p>{{ cls.description }}</p>
+				
+				<!-- Videos -->
+				<div class="infobox infobox-red ">
+					<div class="infobox-icon">
+						<i class="icon-youtube-play"></i>
+					</div>
+
+					<div class="infobox-data">
+						<span class="infobox-data-number">{{ cls.videos|length }}</span>
+						<div class="infobox-content">Videos</div>
+					</div>
+				</div>
+
+				<!-- Support Material -->
+				<div class="infobox infobox-blue">
+					<div class="infobox-icon">
+						<i class="icon-file-text"></i>
+					</div>
+
+					<div class="infobox-data">
+						<span class="infobox-data-number">{{ cls.materials|length }}</span>
+						<div class="infobox-content">Material de Suporte</div>
+					</div>
+				</div>
+
+				<div class="space-6"></div>
+
+				<div class="infobox infobox-red infobox-small infobox-dark">
+					<div class="infobox-icon">
+						<i class="icon-download-alt"></i>
+					</div>
+
+					<div class="infobox-data">
+						<div class="infobox-content">Recursos</div>
+						<div class="infobox-content">{{ cls.resources|length}}</div>
+					</div>
+				</div>
+				<div class="infobox infobox-blue infobox-small infobox-dark">
+					<div class="infobox-icon">
+						<i class="icon-comments"></i>
+					</div>
+
+					<div class="infobox-data">
+						<div class="infobox-content">Comentários</div>
+						<div class="infobox-content">{{ cls.comments|length}}</div>
+					</div>
+				</div>
+				<div class="infobox infobox-grey infobox-small infobox-dark">
+					<div class="infobox-icon">
+						<i class="icon-calendar"></i>
+					</div>
+
+					<div class="infobox-data">
+						<div class="infobox-content">Calendário</div>
+						<div class="infobox-content">{{ cls.get_events()|length}}</div>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+		</div>
+		
+		<!-- New class form -->
+		<div class="col-xs-12 col-sm-6" id="dv-class-form" {% if not alerts %}style="display:none;" {% endif %}>
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4>Nova Aula</h4>
+				</div>
+
+				<div class="widget-body">
+					<div class="widget-main">
+						{% if alerts %}
+						<div class="alert alert-danger padding10">
+							<button type="button" class="close" data-dismiss="alert">
+								<i class="icon-remove"></i>
+							</button>
+							{% for alert in alerts %}
+								<span class="bottom5">{{ alert|safe }}</span>
+							{% endfor %}
+							<br>
+						</div>
+						{% endif %}
+						<form class="form-horizontal" method="POST">
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="title">Título</label>
+								<div class="col-sm-9">
+									<input type="text" id="title" name="title" class="col-xs-10 col-sm-12">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right">Descrição</label>
+								<div class="col-sm-9">
+									<textarea class="form-control" id="desc" name="desc" style="height: 200px;"></textarea>
+								</div>
+							</div>
+							<div class="clearfix form-actions bottom5 top5">
+								<div class="col-md-offset-3 col-md-9">
+									<button class="btn btn-info" type="submit">
+										<i class="icon-ok bigger-110"></i>
+										Enviar
+									</button>
+									&nbsp; &nbsp; &nbsp;
+									<button class="btn btn-danger toggleIt" data-target="#dv-class-form">
+										<i class="icon-remove bigger-110"></i>
+										Cancelar
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Invite form -->
+		<div class="col-xs-12 col-sm-6" id="dv-invite-form" style="display:none;" >
+			<div class="widget-box">
+				<div class="widget-header">
+					<h4>Convide um amigo para este curso</h4>
+				</div>
+
+				<div class="widget-body">
+					<div class="widget-main">
+						{% if alerts %}
+						<div class="alert alert-danger padding10">
+							<button type="button" class="close" data-dismiss="alert">
+								<i class="icon-remove"></i>
+							</button>
+							{% for alert in alerts %}
+								<span class="bottom5">{{ alert|safe }}</span>
+							{% endfor %}
+							<br>
+						</div>
+						{% endif %}
+						<form class="form-horizontal" method="POST">
+							<div class="form-group">
+								<label class="col-sm-2 control-label no-padding-right" for="title">Email</label>
+								<div class="col-sm-9">
+									<input type="text" id="email" name="email" class="col-xs-10 col-sm-12">
+								</div>
+							</div>
+							<div class="clearfix">
+								<div class="col-md-offset-3 col-md-9">
+									<button class="btn btn-info" type="submit" id="invite-btn" data-target="{{ subject.key.id() }}">
+										<i class="icon-ok bigger-110"></i>
+										Enviar
+									</button>
+									&nbsp; &nbsp; &nbsp;
+									<button class="btn btn-danger toggleIt" data-target="#dv-invite-form">
+										<i class="icon-remove bigger-110"></i>
+										Cancelar
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div><!-- /.row -->
+</div><!-- /.page-content -->
+{% endblock %}
+
+
+{% block custom_footer_script %}
+<script src="/assets/js/educando/subject.js"></script>
+{% endblock %}

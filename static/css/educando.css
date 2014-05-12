@@ -1,0 +1,18 @@
+.bottom5{margin-bottom: 5px;}
+.bottom10{margin-bottom: 10px;}
+.bottom20{margin-bottom: 20px;}
+
+.top5{ margin-top: 5px;}
+.top10{ margin-top: 10px; }
+.top15{ margin-top: 15px; }
+.top80{ margin-top: 80px; }
+
+.left10{margin-left: 10px;}
+.left20{margin-left: 20px;}
+
+.right{
+	position: absolute;
+	right :0px;
+}
+
+.padding10{padding: 10px;}

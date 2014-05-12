@@ -1,0 +1,74 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Not Found{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+
+			<div class="error-container">
+				<div class="well">
+					<h1 class="grey lighter smaller">
+						<span class="blue bigger-125">
+							<i class="icon-sitemap"></i>
+							404
+						</span>
+						Página Não Encontrada
+					</h1>
+
+					<hr>
+					<h3 class="lighter smaller">Procuramos em toda parte mas não encontramos!</h3>
+
+					<div>
+						<form class="form-search">
+							<span class="input-icon align-middle">
+								<i class="icon-search"></i>
+
+								<input type="text" class="search-query" placeholder="Give it a search...">
+							</span>
+							<button class="btn btn-sm" onclick="return false;">Go!</button>
+						</form>
+
+						<div class="space"></div>
+						<h4 class="smaller">Tente alguma das seguintes opções:</h4>
+
+						<ul class="list-unstyled spaced inline bigger-110 margin-15">
+							<li>
+								<i class="icon-hand-right blue"></i>
+								Verifique se a URL está correta
+							</li>
+
+							<li>
+								<i class="icon-hand-right blue"></i>
+								Leia o FAQ
+							</li>
+
+							<li>
+								<i class="icon-hand-right blue"></i>
+								Conte-nos qual problema você teve
+							</li>
+						</ul>
+					</div>
+
+					<hr>
+					<div class="space"></div>
+
+					<div class="center">
+						<a href="/" class="btn btn-grey">
+							<i class="icon-arrow-left"></i>
+							Voltar
+						</a>
+
+						<a href="/" class="btn btn-primary">
+							<i class="icon-home"></i>
+							Início
+						</a>
+					</div>
+				</div>
+			</div><!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div>
+{% endblock %}

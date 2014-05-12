@@ -1,0 +1,293 @@
+{% extends 'app/base.html' %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+	Profile
+</li>
+{% endblock %}
+
+{% block page_content %}
+<div class="page-content">
+	<div class="page-header">
+		<h1>
+			{{ profile.name}} Profile
+		</h1>
+	</div><!-- /.page-header -->
+
+	<div class="row">
+		<div class="col-xs-12">
+			<!-- PAGE CONTENT BEGINS -->
+			<div class="">
+				<div id="user-profile" class="user-profile">
+					<div class="tabbable">
+						<ul class="nav nav-tabs padding-18">
+							<li class="active">
+								<a data-toggle="tab" href="#home">
+									<i class="green icon-user bigger-120"></i>
+									Profile
+								</a>
+							</li>
+
+							<li>
+								<a data-toggle="tab" href="#friends">
+									<i class="blue icon-group bigger-120"></i>
+									Acompanhar Cursos
+								</a>
+							</li>
+						</ul>
+
+						<div class="tab-content no-border padding-24">
+							<div id="home" class="tab-pane in active">
+								<div class="row">
+									
+									<div class="col-xs-12 col-sm-3 center">
+										<span class="profile-picture">
+											<img class="editable img-responsive" id="avatar" src="{{ profile|avatar_url('200')}}">
+										</span>
+
+										<div class="space space-4"></div>
+										{% if logged != profile %}
+										<a href="#" class="btn btn-sm btn-block btn-primary modalIt" data-target="#modal-sendmessage">
+											<i class="icon-envelope-alt bigger-110"></i>
+											<span class="bigger-110">Envie uma mensagem</span>
+										</a>
+										<div class="hr dotted"></div>
+										{% endif %}
+										<div class="clearfix">
+											<div class="grid2">
+												<span class="bigger-175 blue">
+													{% if profile.get_subjects() %}
+														<a href="{{ uri_for('courses_by')}}?profile={{ profile.key.id() }}">{{ profile.get_subjects()|length}}</a>
+													{% else %}
+														0
+													{% endif %}
+												</span>
+												<br>
+												Ensinando
+											</div>
+
+											<div class="grid2">
+												<span class="bigger-175 blue">
+													{% if profile.get_followed_courses() %}
+														<a href="{{ uri_for('followed_by')}}?profile={{ profile.key.id() }}">{{ profile.get_followed_courses()|length}}</a>
+													{% else %}
+														0
+													{% endif %}
+												</span>
+												<br>
+												Acompanhando
+											</div>
+										</div>
+									</div><!-- /span -->
+
+
+									<div class="col-xs-12 col-sm-9">
+										<div class="profile-user-info">
+											{% if can_edit and profile.is_app_profile() %}
+											<div class="profile-info-row">
+												<div class="profile-info-name"> Usuário </div>
+
+												<div class="profile-info-value">
+													<span>{{ profile.email }}</span>
+												</div>
+											</div>
+											{% endif %}
+
+											<div class="profile-info-row">
+												<div class="profile-info-name"> Nome </div>
+
+												<div class="profile-info-value">
+													<span id="name" data-type="text" data-url="{{ uri_for('profile') }}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="Name">{{ profile.name }}</span>
+													<span id="last_name" data-type="text" data-url="{{ uri_for('profile') }}"  data-pk="{{ profile.key.id() }}"
+														class="editable editable-text"  data-emptytext="Last Name">{{ profile.last_name }}</span>
+												</div>
+											</div>
+
+											<div class="profile-info-row">
+												<div class="profile-info-name"> Membro desde </div>
+
+												<div class="profile-info-value">
+													<span>{{ profile.created|dateformat('%b %d, %Y') }}</span>
+												</div>
+											</div>
+
+											<div class="profile-info-row">
+												<div class="profile-info-name"> Tipo </div>
+
+												<div class="profile-info-value">
+													<span>{{ profile.TYPE_CHOICES[profile.user_type] }}</span>
+												</div>
+											</div>
+
+										</div>
+
+										<div class="hr hr-8 dotted"></div>
+
+										<div class="profile-user-info">
+											<div class="profile-info-row">
+												<div class="profile-info-name"> Website </div>
+
+												<div class="profile-info-value">
+													<span id="website" data-type="text" data-url="{{ uri_for('profile') }}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="address">
+														<a href="{{ profile.website or '#'}}" target="_blank">{{ profile.website or '...'}}</a></span>
+												</div>
+											</div>
+
+											<div class="profile-info-row">
+												<div class="profile-info-name">
+														<i class="middle icon-facebook-sign bigger-150 blue"></i>
+												</div>
+
+												
+												<div class="profile-info-value">
+													<span id="fcbk_url" data-type="text" data-url="{{ uri_for('profile') }}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="Facebook Profile">
+														<a href="{{ profile.fcbk_url or '#'}}" target="_blank">{{ profile.fcbk_url or '...' }}</a></span>
+												</div>
+											</div>
+
+											<div class="profile-info-row">
+												<div class="profile-info-name">
+													<i class="middle icon-twitter-sign bigger-150 light-blue"></i>
+												</div>
+
+												<div class="profile-info-value">
+													<span id="tw_url" data-type="text" data-url="{{ uri_for('profile') }}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="Twitter Profile">
+														<a href="{{ profile.tw_url or '#' }}" target="_blank">{{ profile.tw_url or '...' }}</a></span>
+												</div>
+											</div>
+
+											<div class="profile-info-row">
+												<div class="profile-info-name">
+													<i class="middle icon-google-plus-sign bigger-150 red"></i>
+												</div>
+
+												<div class="profile-info-value">
+													<span id="gplus_url" data-type="text" data-url="{{ uri_for('profile')}}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="Google +">
+														<a href="{{ profile.gplus_url or '#'}}" target="_blank">{{ profile.gplus_url or '...' }}</a></span>
+												</div>
+											</div>
+										</div>
+									</div><!-- /span -->
+								</div><!-- /row-fluid -->
+
+								<div class="space-20"></div>
+
+								<div class="row">
+									<div class="col-xs-12 col-sm-6">
+										<div class="widget-box transparent">
+											<div class="widget-header widget-header-small">
+												<h4 class="smaller">
+													<i class="icon-check bigger-110"></i>
+													Sobre mim
+												</h4>
+											</div>
+
+											<div class="widget-body">
+												<div class="widget-main">
+													<span id="about" data-type="textarea" data-url="{{ uri_for('profile')}}" data-pk="{{ profile.key.id() }}"
+														class="editable editable-text" data-emptytext="About me...">{% if profile.about %}{{ profile.about}}{% endif %}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div><!-- #home -->
+
+							<div id="friends" class="tab-pane">
+								{% for subject in profile.get_followed_courses() %}
+								<div class="well well-lg">
+									<h4>
+										<a href="/classes/{{ subject.key.id() }}">{{ subject.title }}</a>
+										{% if logged.is_following(subject) %}
+										<a class="unfollow-course orange" data-target="{{ subject.key.id() }}" href="#" data-rel="tooltip" data-original-title="Following Course - click to unfollow">
+												<i class="icon-star"></i>
+											</a>
+										{% else %}
+											<a class="follow-course grey" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Follow Course">
+												<i class="icon-star-empty"></i>
+											</a>
+										{% endif %}
+									</h4>
+									<p>{{ subject.description }}</p>
+									<div>
+										<div class="fb-like" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" 
+											data-width="47px" data-colorscheme="light" data-layout="standard" 
+											data-action="like" data-show-faces="false" data-send="false"></div>
+										<div class="g-plusone" data-size="medium" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" data-recommendations="false" data-annotation="none"></div>
+									</div>
+									<div class="profile-activity clearfix">
+										<div>
+											<img class="pull-left" src="{{ subject.owner.get()|avatar_url('75') }}">
+											<a class="user" href="{{ uri_for('profile') }}/{{ subject.owner.id()}}"> {{ subject.owner.get().full_name }} </a>
+										</div>
+									</div>
+								</div>
+								{% endfor %}
+							</div><!-- /#friends -->
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- PAGE CONTENT ENDS -->
+		</div><!-- /.col -->
+	</div><!-- /.row -->
+</div>
+
+<!-- Modal Send Message -->
+<div class="modal fade" id="modal-sendmessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+      <h4 class="modal-title">Enviar Mensagem</h4>
+    </div>
+    <div class="modal-body" style="padding-bottom: 40px;">
+      	<input type="hidden" name="message_to" id="message_to" value="{{ profile.key.id() }}">
+		<div class="form-group">
+			<label class="col-sm-3 control-label no-padding-right" for="form-field-subject">Assunto:</label>
+
+			<div class="col-sm-6 col-xs-12">
+				<div class="input-icon block col-xs-12 no-padding">
+					<input maxlength="100" type="text" class="col-xs-12" name="subject" id="message_subject">
+				</div>
+			</div>
+		</div>
+		<div class="space"></div>
+		<div class="space"></div>
+
+		<div class="form-group below10">
+			<label class="col-sm-3 control-label no-padding-right" for="form-field-subject">Mensagem:</label>
+
+			<div class="col-sm-9">
+				<textarea id="message_text" class="form-control"></textarea>
+			</div>
+		</div>
+
+		<div class="space"></div>
+    </div>
+    <div class="modal-footer">
+      <a href="#" onclick="send_message()"><button type="button" class="btn btn-primary btn-success top10">Enviar</button></a>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}
+
+{% block custom_footer_script %}
+	<link rel="stylesheet" href="/assets/css/bootstrap-editable.css">
+	<script src="/assets/js/x-editable/bootstrap-editable.min.js"></script>
+	<script src="/assets/js/x-editable/ace-editable.min.js"></script>
+	<script src="/assets/js/educando/profile.js"></script>
+
+	<script type="text/javascript">
+		$.profile_avatar_url = "{{ uri_for('profile_avatar')|blobstore_upload_url }}";
+		var can_edit = {% if can_edit %}true{% else %}false{% endif%};
+
+	</script>
+{% endblock %}

@@ -1,0 +1,621 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Aula: {{ cls.title }} {% endblock %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+	<a href="/subjects">Curso</a>
+</li>
+<li>
+	<a href="/classes/{{ cls.subject.id() }}">{{ cls.subject.get().title }}</a>
+</li>
+<li> {{ cls.title }}</li>
+{% endblock %}
+
+
+{% block page_content %}
+<div class="page-content">
+	<div class="row">
+		<div class="col-sm-10">
+			<h3 class="header smaller lighter blue">
+				<span>{{ cls.title }}</span>
+				{% if cls.is_admin(logged) %}
+				<span class="btn-group right below10">
+					<button data-toggle="dropdown" class="btn btn-sm btn-yellow dropdown-toggle">
+						<i class="icon-cog bigger-110 "></i>
+						<i class="icon-angle-down icon-on-right"></i>
+					</button>
+					<ul class="dropdown-menu">
+						<li>
+							<a href="#modal-remove" data-toggle="modal">Remover Aula</a>
+						</li>
+					</ul>
+				</span>
+				{% endif %}
+			</h3>
+			<p>{{ cls.description }}</p>
+
+			<div class="space-6"></div>
+
+			<div class="tabbable">
+				<ul class="nav nav-tabs" id="class-tabs">
+					<li class="active">
+						<a data-toggle="tab" href="#videos-tab">
+							<i class="red icon-youtube-play bigger-110"></i>
+							Videos ({{ cls.videos|length }})
+						</a>
+					</li>
+
+					<li>
+						<a data-toggle="tab" href="#support-tab">
+							<i class="blue icon-file-text bigger-110"></i>
+							Material de Suporte ({{ cls.materials|length }})
+						</a>
+					</li>
+
+					<li class="">
+						<a data-toggle="tab" href="#additional-tab">
+							<i class="orange icon-bookmark"></i>
+							Recursos Adicionais ({{ cls.resources|length }})
+						</a>
+					</li>
+
+					<li class="">
+						<a data-toggle="tab" href="#comment-tab">
+							<i class="green icon-comments"></i>
+							Comentários ({{ cls.comments|length }})
+						</a>
+					</li>
+				</ul>
+
+				<div class="tab-content">
+					<div id="videos-tab" class="tab-pane active">
+						<div class="row">
+							{% for video in cls.videos %}
+								<div class="col-sm-10">
+									<div style="display: inline">
+										<a href="#" class="modalVideo" data-video="{{ video.get_video_id() }}" data-title="{{ video.title }}">
+											<img src="http://img.youtube.com/vi/{{ video.get_video_id() }}/3.jpg">
+										</a>
+									</div>
+
+									<div class="left10 inline">
+										<div class="name ">
+											<a href="#" class="modalVideo" data-video="{{ video.get_video_id() }}" data-title="{{ video.title }}">{{ video.title }}</a>
+										</div>
+
+										<div class="time ">
+											<i class="icon-time"></i>
+											<span class="green video-duration" data-video="{{ video.get_video_id() }}">0 min</span>
+										</div>
+
+										{% if cls.is_admin(logged) %}
+										<div>
+											<span class="label label-sm">ações</span>
+
+											<div class="inline position-relative">
+												<button class="btn btn-minier bigger btn-no-border dropdown-toggle" data-toggle="dropdown">
+													<i class="icon-angle-down icon-only bigger-120"></i>
+												</button>
+
+												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+													<li>
+														<a href="{{ uri_for('delete-video')}}?class_id={{ cls.key.id() }}&video_ts={{ video.created_at|date_to_milis }}" 
+															class="tooltip-error"
+														 	data-rel="tooltip" title="" data-original-title="Delete">
+															<span class="red">
+																<i class="icon-trash bigger-110"></i>
+																Remover Video
+															</span>
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										{% endif %}
+
+									</div>
+									<div class="space-6"></div>
+								</div>
+							{% endfor %}
+						</div>
+						<hr/>
+						{% if cls.is_admin(logged) %}
+						<div >
+							<button class="btn btn-sm btn-warning toggle-new-video">
+								<i class="icon-youtube-play bigger-110"></i>
+								<span class="bigger-110 no-text-shadow toggleIt" data-target="#form-new-video">Adicionar novo video</span>
+							</button>
+							&nbsp;OR&nbsp;
+							<a href="#" class="bigger-110 modalIt" data-target='#modal-hangout'>Iniciar Aula Ao Vivo</a>
+						</div>
+						{% endif %}
+					</div>
+
+					<div id="support-tab" class="tab-pane">
+						<div class="row" id="material_row">
+							{% for material in cls.materials %}
+							<div class="col-sm-10">
+									<div style="display: inline">
+										<a href="{{ material.get_download_url() }}" target="_blank">
+											<img src="/assets/{{ material.get_icon() }}">
+										</a>
+									</div>
+
+									<div class="left10 inline">
+										<div class="name ">
+											<a href="{{ material.get_download_url() }}" target="_blank">{{ material.title }}</a>
+										</div>
+
+										{% if material.get_size() %}
+										<div class="time ">
+											<i class="icon-info"></i>
+											<span class="green">{{ material.get_size()}}</span>
+										</div>
+										{% endif %}
+
+										{% if cls.is_admin(logged) %}
+										<div>
+											<span class="label label-sm">ações</span>
+
+											<div class="inline position-relative">
+												<button class="btn btn-minier bigger btn-no-border dropdown-toggle" data-toggle="dropdown">
+													<i class="icon-angle-down icon-only bigger-120"></i>
+												</button>
+
+												<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+													<li>
+														<a href="{{ uri_for('delete-material')}}?class_id={{ cls.key.id() }}&material_ts={{ material.created_at|date_to_milis }}" 
+															class="tooltip-error" data-rel="tooltip" title="" data-original-title="Delete">
+															<span class="red">
+																<i class="icon-trash bigger-110"></i>
+																Remover Material
+															</span>
+														</a>
+													</li>
+												</ul>
+											</div>
+										</div>
+										{% endif %}
+
+									</div>
+									<div class="space-6"></div>
+								</div>
+							{% endfor %}
+						</div>
+						<hr/>
+						{% if cls.is_admin(logged) %}
+						<div >
+							<button class="btn btn-sm btn-warning toggle-new-video">
+								<i class="icon-file-text bigger-110"></i>
+								<span class="bigger-110 no-text-shadow toggleIt" data-target="#form-new-material">Adicionar novo material</span>
+							</button>
+							&nbsp;OR&nbsp;
+							<a href="#" id="import-drive">Importar do Google Driver</a>
+						</div>
+						{% endif %}
+					</div>
+
+					<div id="additional-tab" class="tab-pane">
+						<div class="row">
+							{% for resource in cls.resources %}
+								<div class="col-sm-10">
+									<div class="">
+										<div class="name ">
+											<span>{{ resource.title }}</span>
+											{% if cls.is_admin(logged) %}
+											<a href="{{ uri_for('delete-resource')}}?resource_ts={{resource.created_at|date_to_milis }}&class_id={{ cls.key.id() }}" class="red left5">
+												<i class="icon-trash bigger-110"></i>
+											</a>
+											{% endif %}
+										</div>
+
+										<div class="name">
+											<a href="{{ resource.url }}" target="_blank">{{ resource.url }}</a>
+										</div>
+									</div>
+									<div class="space-6"></div>
+								</div>
+							{% endfor %}
+						</div>
+						<hr/>
+						{% if cls.is_admin(logged) %}
+						<div >
+							<button class="btn btn-sm btn-warning">
+								<i class="icon-bookmark bigger-110"></i>
+								<span class="bigger-110 no-text-shadow toggleIt" data-target="#form-new-resource">Adicionar novo recurso</span>
+							</button>
+						</div>
+						{% endif %}
+					</div>
+
+					<div id="comment-tab" class="tab-pane">
+						<div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 300px;">
+							<div class="comments" style="overflow: auto; width: auto; height: 300px;" id="comment_list">
+							{% for comment in cls.comments %} <div class="itemdiv commentdiv" id="dv-{{ comment.created_at|date_to_milis }}">
+								<div class="user">
+									<img alt="" src="{{ comment.profile|avatar_url('50')}}">
+								</div>
+
+								<div class="body">
+									<div class="name">
+										<a href="{{ uri_for('profile')}}/{{comment.profile.key.id()}}">{{ comment.profile.full_name }}</a>
+									</div>
+
+									<div class="time">
+										<i class="icon-time"></i>
+										<span class="green">{{ comment.created_at|dateformat }}</span>
+									</div>
+
+									<div class="text">
+										<i class="icon-quote-left"></i>
+										{{ comment.text }}
+									</div>
+								</div>
+
+								{% if cls.is_admin(logged) or comment.can_delete(logged) %}
+								<div class="tools">
+									<div class="action-buttons bigger-125">
+										<a href="#" class="del-comment" data-time="{{ comment.created_at|date_to_milis }}">
+											<i class="icon-trash red"></i>
+										</a>
+									</div>
+								</div>
+								{% endif %}
+							</div>
+							{% endfor %}
+						</div>
+					</div>
+					<div>
+						<div class="form-actions">
+							<div class="input-group">
+								<input placeholder="Type your comment here ..." type="text" class="form-control" name="comment" id="comment-text">
+								<span class="input-group-btn">
+									<button class="btn btn-sm btn-info no-radius" type="button" id="add-comment">
+										<i class="icon-share-alt"></i>
+										Enviar
+									</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Form new video -->
+			<div id="form-new-video" style="display: none;" class="top10">
+				<form method="POST" action="/addvideo">
+					<input type="hidden" name="class_id" value="{{ cls.key.id() }}">
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right" for="form-field-1">Título</label>
+							<div class="col-sm-9">
+								<input type="text" id="vtitle" name="vtitle" class="col-xs-10 col-sm-12">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right" for="form-field-1">Youtube URL</label>
+							<div class="col-sm-9">
+								<input type="text" id="vurl" name="vurl" class="col-xs-10 col-sm-12">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-4">
+							<button class="btn btn-info btn-sm" type="submit">
+								<i class="icon-ok bigger-110"></i>
+								Enviar
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn btn-danger btn-sm toggleIt" data-target="#form-new-video">
+								<i class="icon-remove bigger-110"></i>
+								Cancelar
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<!-- Form new material -->
+			<div id="form-new-material" style="display: none;" class="top10">
+				<form method="POST" action="{{ upload_to }}" enctype="multipart/form-data">
+					<input type="hidden" name="class_id" value="{{ cls.key.id() }}">
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right">Título</label>
+							<div class="col-sm-9">
+								<input type="text" id="mtitle" name="mtitle" class="col-xs-10 col-sm-12">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right">Arquivo</label>
+							<div class="col-sm-9">
+								<input type="file" name="mfile">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-4">
+							<button class="btn btn-info btn-sm" type="submit">
+								<i class="icon-ok bigger-110"></i>
+								Enviar
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn btn-danger btn-sm toggleIt" data-target="#form-new-material">
+								<i class="icon-remove bigger-110"></i>
+								Cancelar
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<!-- Form new resource -->
+			<div id="form-new-resource" style="display: none;" class="top10">
+				<form method="POST" action="/addresource">
+					<input type="hidden" name="class_id" value="{{ cls.key.id() }}">
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right">Título</label>
+							<div class="col-sm-9">
+								<input type="text" id="rtitle" name="rtitle" class="col-xs-10 col-sm-12">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-6">
+							<label class="col-sm-2 control-label no-padding-right">URL</label>
+							<div class="col-sm-9">
+								<input type="text" id="rurl" name="rurl" class="col-xs-10 col-sm-12">
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="form-group col-sm-4">
+							<button class="btn btn-info btn-sm" type="submit">
+								<i class="icon-ok bigger-110"></i>
+								Enviar
+							</button>
+							&nbsp; &nbsp; &nbsp;
+							<button class="btn btn-danger btn-sm toggleIt" data-target="#form-new-resource">
+								<i class="icon-remove bigger-110"></i>
+								Cancelar
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div><!-- /.row -->
+</div><!-- /.page-content -->
+
+  <!-- Modal Remove Class-->
+  <div class="modal fade" id="modal-remove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Removendo Aula</h4>
+        </div>
+        <div class="modal-body">
+          <p>Se você remover esta aula, todo o conteúdo relacionado(videos, materiais, etc) serão perdidos.</p>
+          <p>Você tem certeza que deseja remover a aula '{{ cls.title }}'?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+          <a href="/class/{{ cls.key.id() }}/delete"><button type="button" class="btn btn-primary btn-danger">Sim</button></a>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <!-- Modal Video -->
+  <div class="fade" id="modal-video" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" style="width: 900px;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="modal-title">
+         </h4>
+        </div>
+        <div class="modal-body">
+        	<div class="inline">
+	          <div id="ytplayer">
+	          </div>
+	        </div>
+	        <div class="inline position-absolute left10" style="height: 450px; overflow:auto" id="video-comments">
+	        	<span>
+	        		<p>Carregando comentários...</p>
+	        		<i class="icon-spinner icon-spin orange bigger-125"></i>
+	        	</span>
+	        </div>
+	        <div class="top10" style="">
+	        	<input type="text" id='text-video-comment' style="width: 620px; font-size: 12px;" placeholder="Write some note about this class...">
+	        	<a href="#" class="left5 bigger-120" id="add-video-comment">
+    				<i class="icon-share-alt"></i> 
+    			</a> 
+	        </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+<!-- Modal Google Drive-->
+<div class="modal fade" id="modal-gdrive" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Arquivos do Google Drive</h4>
+        </div>
+        <div class="modal-body">
+			<div id="gdrive-container">
+				<h4>
+					<i class="icon-spinner icon-spin orange bigger-125"></i>
+					Carregando arquivos...
+				</h4>
+			</div>
+			<div class="modal-paging">
+	          	<ul class="pager">
+					<li class="next">
+						<a id="more-files" href="#" data-token="">Mais Arquivos</a>
+					</li>
+				</ul>
+	        </div>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+<!-- Modal Start Hangout -->
+  <div class="modal fade" id="modal-hangout" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="modal-title">
+          	<span>Antes de iniciar...</span>
+         </h4>
+        </div>
+        <div class="modal-body bigger-120">
+        	<p>Você está prestes a iniciar uma aula ao vivo no Google Hangout(Hangout OnAir).</p>
+        	<p>Copie a URL do Hangout (dos seus links do hangout <a href="#">?</a>) e adicione aos vídeos de sua aula para que todo tenham acesso a ele.</p>
+        </div>
+        <div class="modal-footer">
+        	<a class="btn btn-primary" onclick="open_hangout(this);" 
+        	data-hangouturl="https://plus.google.com/hangouts/_?hso=0&gid={{ settings.HANGOUT_APP_ID }}" >
+        		Iniciar Aula Ao Vivo</a>
+       	</div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+{% raw %}
+<script id="tmpl_gdive" type="text/template">
+<div class="profile-activity clearfix" >
+	<div>
+		<img class="pull-left" src="{{ file.iconLink }}">
+		<a href="{{ file.alternateLink }}" target="_blank">{{ file.title }}</a>
+	</div>
+
+	<div class="tools action-buttons">
+		<a href="#" class="get_gdrive_file" data-fjson="{{ fjson }}">
+			<i class="icon-cloud-download bigger-125"></i>
+		</a>
+	</div>
+</div>
+</script>
+
+<script id="tmpl_add_gfile" type="text/template">
+<div class="col-sm-10">
+	<div style="display: inline">
+		<a href="{{ file.alternateLink}}" target="_blank">
+			<img src="{{ file.iconLink}}" style="width: 60px; height: 60px;">
+		</a>
+	</div>
+
+	<div class="left10 inline">
+		<div class="name ">
+			<a href="{{ file.alternateLink }}" target="_blank">{{ file.title }}</a>
+		</div>
+
+		<div class="time ">
+			<i class="icon-info"></i>
+			<span class="green">{{ file.fileSize }}</span>
+		</div>
+
+		<div>
+			<span class="label label-sm">ações</span>
+
+			<div class="inline position-relative">
+				<button class="btn btn-minier bigger btn-no-border dropdown-toggle" data-toggle="dropdown">
+					<i class="icon-angle-down icon-only bigger-120"></i>
+				</button>
+
+				<ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+					<li>
+						<a href="#" class="tooltip-error" data-rel="tooltip" title="" data-original-title="Delete">
+							<span class="red">
+								<i class="icon-trash bigger-110"></i>
+								Remover Material
+							</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="space-6"></div>
+</div>
+</script>
+
+
+<script id="tmpl_new_comment" type="text/template">
+<div class="itemdiv commentdiv" id="dv-{{ comment_ts }}">
+	<div class="user">
+		<img alt="" src="{{ avatar_url }}">
+	</div>
+
+	<div class="body">
+		<div class="name">
+			<a href="{{ profile_url }}">{{ profile_name }}</a>
+		</div>
+
+		<div class="time">
+			<i class="icon-time"></i>
+			<span class="green">{{ comment_date }}</span>
+		</div>
+
+		<div class="text">
+			<i class="icon-quote-left"></i>
+			{{ comment_text }}
+		</div>
+	</div>
+
+	<div class="tools">
+		<div class="action-buttons bigger-125">
+			<a href="#" data-time="{{ comment_ts }}" class="del-comment" id="adel-{{ comment_ts }}">
+				<i class="icon-trash red"></i>
+			</a>
+		</div>
+	</div>
+</div>
+</script>
+
+<script id="tmpl_video_comment" type="text/template">
+<div class="well well-sm" style="width: 200px; font-size: 11px; margin-bottom: 5px;" id="video-comment-{{ cid }}">
+	<div class="text">
+		{{ text }}
+	</div>
+	<div class="time">
+		<a href="#" onclick="load_on_time(this);" data-time="{{ vtime }}">
+			<i class="icon-time"></i> 
+			{{ parsed_time }}
+		</a>
+		<a href="#" class="red left5" onclick="del_video_comment(this)" data-comment="{{ cid }}">
+			<i class="icon-trash bigger-110"></i>
+		</a>
+	</div>
+</div>
+</script>
+ {% endraw %}
+{% endblock %}
+
+  {% block custom_footer_script %}
+  <script src="/assets/js/educando/class_detail.js"></script>
+  <script type="text/javascript">
+  	$.cls_id = {{ cls.key.id() }}
+  	var player;
+  	var dr = document.createElement('script'); dr.type = 'text/javascript'; dr.async = true;
+    dr.src = 'https://apis.google.com/js/client.js?onload=setup_gclient_sdk';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(dr, s);
+  </script>
+{% endblock %}

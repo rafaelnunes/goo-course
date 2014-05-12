@@ -1,0 +1,93 @@
+{% extends 'app/base.html' %}
+
+{% block breadcumb_items %}
+<li>
+	<i class="icon-home home-icon"></i>
+	<a href="#">Início</a>
+</li>
+<li class="active">
+	Dashboard
+</li>
+{% endblock %}
+
+{% block page_content %}
+<style type="text/css">
+/* CSS Hack for hiding the LIKE count */
+div.fb-like span {
+  display:block;
+  width:48px !important;  
+}
+
+div.fb-like iframe {
+  width:48px !important;
+}
+
+div.fb-like iframe.fb_iframe_widget_lift {
+  width:450px !important;
+}
+</style>
+
+<div class="page-content">
+	<div class="row">
+		<!-- Subject listing -->
+		<div class="col-sm-6">
+			<h3 class="header smaller lighter green">
+				<span>Cursos</span>
+			</h3>
+			{% for subject in subjects %}
+			<div class="well well-lg">
+				<h4>
+					<a href="/classes/{{ subject.key.id() }}">{{ subject.title }}</a>
+					{% if logged.is_following(subject) %}
+					<a class="unfollow-course orange" data-target="{{ subject.key.id() }}" href="#" data-rel="tooltip" data-original-title="Acompanhando Curso - click para cancelar">
+							<i class="icon-star"></i>
+						</a>
+					{% else %}
+						<a class="follow-course grey" data-target="{{ subject.key.id() }}" href="#"  data-rel="tooltip" data-original-title="Acompanhar Curso">
+							<i class="icon-star-empty"></i>
+						</a>
+					{% endif %}
+				</h4>
+				<p>{{ subject.description }}</p>
+				<div>
+					<div class="fb-like" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" 
+						data-width="47px" data-colorscheme="light" data-layout="standard" 
+						data-action="like" data-show-faces="false" data-send="false"></div>
+					<div class="g-plusone" data-size="medium" data-href="http://{{ settings.HOST_NAME }}/classes/{{ subject.key.id() }}" data-recommendations="false" data-annotation="none"></div>
+				</div>
+				<div class="profile-activity clearfix">
+					<div>
+						<img class="pull-left" src="{{ subject.owner.get()|avatar_url('75') }}">
+						<a class="user" href="{{ uri_for('profile') }}/{{ subject.owner.id()}}"> {{ subject.owner.get().full_name }} </a>
+					</div>
+				</div>
+			</div>
+			{% endfor %}
+			{% if not subjects %}
+				<h4>Não achamos nenhum curso com o termo: '{{ search_term }}'. <a href="{{ uri_for('search') }}">Tentar algum outro?</a></h4>
+				<ul class="list-unstyled spaced inline bigger-110 margin-15">
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Re-check the url for typos
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Read the faq
+					</li>
+
+					<li>
+						<i class="icon-hand-right blue"></i>
+						Tell us about it
+					</li>
+				</ul>
+			{% endif %}
+		</div>
+	</div><!-- /.row -->
+</div><!-- /.page-content -->
+{% endblock %}
+
+{% block custom_footer_script %}
+<div id="fb-root"></div>
+<script src="/assets/js/educando/subject.js"></script>
+{% endblock %}
